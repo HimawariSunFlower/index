@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+    <!-- 网页的标题、图标... -->
+<head>
+    <mate charset="utf-8">
+    <title>第一个网页</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+    </script>
+    <script type="text/javascript">
+   
+    login = function (){
+        $.ajax({
+            //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('index/Dlwz/index')}" ,//url
+                data: $('#form1').serialize(),
+                success: function (result) {
+                    console.log(typeof result);//打印服务端返回的数据(调试用)
+                    if(typeof result=="string"){
+                        alert(result);
+                        $('#captchaImg').attr("src", "{:captcha_src()}"); 
+                    }else{
+                        window.location.href = "{:url('index/Dlwz/home')}";
+                    //document.write(result) ;
+                }
+                   
+                },
+                error : function() {
+                    alert("异常！");
+                }
+        });
+           
+    }
+   
+    </script>
+</head>
+    <!-- 网页的具体内容 -->
+<body>
+    <FORM FORM method="post" id="form1" onsubmit="return false" action="##" >
+    昵称：  <INPUT type="text" class="text" name="nickname"><br/>
+    用户名：<INPUT type="text" class="text" name="username"><br/>
+    密码：  <INPUT type="password" class="text" name="password"><br/>
+    <div>
+         <input type="text" id="captcha" placeholder="验证码" name="captcha"/>
+         <!-- <span id="captchaChecked" style="display:none;color:green;font-weight:bold">√</span> -->
+    </div>
+    <div >
+        <img class="captcha_img"  id="captchaImg" alt="点击刷新验证码" src="{:captcha_src()}">
+    </div>
+    <input type="hidden" name="__token__" value="{$Request.token}" />
+    <INPUT type="button" class="btn" value=" 提交 "  onclick='login()'>
+    </FORM>
+</body>
+</html>

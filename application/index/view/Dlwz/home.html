@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>也许是个主页</title>
+	</head>
+	<body>
+		<table  border="1" align="center">
+			<caption><b>用户数据</b></caption>
+				<tr>
+					<th>数据库id</th>
+					<th>昵称</th>
+					<th>用户名</th>
+					<th>密码</th>
+				</tr>	
+			{foreach $name as $key=>$vo } 
+				<tr>
+					<th>{$vo.id}</th>
+					<th>{$vo.nickname}</th>
+					<th>{$vo.username}</th>
+					<th>{$vo.password}</th>
+				</tr>	
+			{/foreach}	
+		</table>
+		<FORM method="post" class="form" action="{:url('index/Dlwz/add')}" align="center">
+		<INPUT type="submit" class="btn" value=" 新增 ">
+		</FORM>
+		<FORM method="post" class="form" action="{:url('index/Dlwz/erase')}" align="center">
+		<INPUT type="submit" class="btn" value=" 删除 ">
+		</FORM>
+		<FORM method="post" class="form" action="{:url('index/Dlwz/revise')}" align="center">
+		<INPUT type="submit" class="btn" value=" 修改 ">
+		</FORM>
+	</body>
+</html>
+
+		
+		

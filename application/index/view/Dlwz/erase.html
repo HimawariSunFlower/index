@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+    <!-- 网页的标题、图标... -->
+<head>
+    <mate charset="utf-8">
+    <title>删除账户</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+    </script>
+    <script type="text/javascript">
+   
+    login = function (){
+        $.ajax({
+            //几个参数需要注意一下
+                type: "POST",//方法类型
+                dataType: "json",//预期服务器返回的数据类型
+                url: "{:url('index/Dlwz/eraseinf')}" ,//url
+                data: $('#form1').serialize(),
+                success: function (result) {
+                    console.log(result);//打印服务端返回的数据(调试用)
+                    alert(result);
+                },
+                error : function() {
+                    alert("异常！");
+                }
+        });
+           
+    }
+   
+    </script>
+</head>
+    <!-- 网页的具体内容 -->
+<body>
+    <FORM method="post" id="form1" onsubmit="return false" action="##" >
+    id：<INPUT type="text" class="text" name="id"><br/>
+    <INPUT type="button" class="btn" value=" 提交 " onclick='login()'>
+    </FORM>
+</body>
+</html>
