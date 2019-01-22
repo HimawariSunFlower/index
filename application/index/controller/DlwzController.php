@@ -16,6 +16,7 @@ use think\Request;
 use think\Controller;
 use think\captcha\Captcha;
 use think\Session;
+use think\Paginate;
 
  
 
@@ -76,9 +77,7 @@ class DlwzController extends \think\Controller
 
             $inf=Db::table('think_dlwz')
             ->where('id', '>', 0)
-            ->order('create_time')
-            ->limit(10)
-            ->select();
+            ->paginate(10);
             $this->assign('name',$inf);
             //return dump($inf);
             return $this->fetch();
