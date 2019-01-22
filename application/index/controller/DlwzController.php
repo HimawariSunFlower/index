@@ -29,49 +29,44 @@ class DlwzController extends \think\Controller
         //$jump=$this->home();
         if($request->isAjax())
         {
-            if(session::get("id")){
-                // session("id",null);
-
-                if($request->param()){
-                    $user=$request->param();
-                    if(!captcha_check($user["captcha"])){
-                        return json(['status'=>0, 'info'=>'验证码错误']);
+            $session=$request->header()["cookie"];
+            $sessionId=substr($session,10);
+            Session::set("id",$sessionId);
+            if($request->param()){
+                $user=$request->param();
+                if(!captcha_check($user["captcha"])){
+                    return json(['status'=>0, 'info'=>'验证码错误']);
+                }else{
+                    if($user["username"]&&$user["password"]){
+                        $judge =Db::table('think_dlwz')->where('username',$user["username"])->find();
+                            if($judge){
+                                if($user["username"]==$judge["username"]){
+                                    if($user["password"]==$judge["password"]){
+                                        //echo $jump;
+                                        return json(['status'=>1, 'info'=>'页面跳转']);
+                                    }else{
+                                        return json(['status'=>0, 'info'=>'密码错误']);
+                                    }
+                                    }else{
+                                        return json(['status'=>0, 'info'=>'用户名错误']);
+                                    }
+                            }else{
+                                return json(['status'=>0, 'info'=>'用户名不存在']);
+                            }
                     }else{
-                        if($user["username"]&&$user["password"]){
-                            $judge =Db::table('think_dlwz')->where('username',$user["username"])->find();
-                                if($judge){
-                                    if($user["username"]==$judge["username"]){
-                                        if($user["password"]==$judge["password"]){
-                                            //echo $jump;
-                                            return json(['status'=>1, 'info'=>'页面跳转']);
-                                        }else{
-                                            return json(['status'=>0, 'info'=>'密码错误']);
-                                        }
-                                        }else{
-                                            return json(['status'=>0, 'info'=>'用户名错误']);
-                                        }
-                                }else{
-                                    return json(['status'=>0, 'info'=>'用户名不存在']);
-                                }
-                        }else{
-                            return json(['status'=>0, 'info'=>'请先输入再提交']);
-                        }
+                        return json(['status'=>0, 'info'=>'请先输入再提交']);
                     }
-                    }else{
-                    return json(['status'=>0, 'info'=>'传参错误']);
-                    }
+                }
+                }else{
+                return json(['status'=>0, 'info'=>'传参错误']);
+                }
             }
-        }else{
-            return "请重新登陆";
-        }
         return;
 
     }
-    public function echos(Request $re)
+    public function echos()
     {
-        $session=$re->header()["cookie"];
-        $sessionId=substr($session,10);
-        Session::set("id",$sessionId);
+
         return view();
     }
     public function home()
@@ -91,6 +86,11 @@ class DlwzController extends \think\Controller
             echo "重新登陆";
             return;
         }
+    }
+    public function logout(){
+        session("id",null);
+        
+        return 	view("echos");
     }
     public function add()
     {
