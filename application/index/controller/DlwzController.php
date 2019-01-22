@@ -77,7 +77,7 @@ class DlwzController extends \think\Controller
     public function home()
     {
         if(session::get("id")){
-            session("id",null);
+           // session("id",null);
 
             $inf=Db::table('think_dlwz')
             ->where('id', '>', 0)
