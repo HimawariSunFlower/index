@@ -26,7 +26,7 @@ return [
     'auto_bind_module'       => false,
     // 注册的根命名空间
     'root_namespace'         => [
-        'extend\User' => '../extend/User/',
+        
                                  ],
     // 扩展函数文件
     'extra_file_list'        => [THINK_PATH . 'helper' . EXT],
@@ -53,6 +53,11 @@ return [
     'parse_str'=>[
         '__PUBLIC__'=>'/public/',
         '__ROOT__' => '/',
+    ],
+      // 视图输出字符串内容替换
+      'view_replace_str'       => [
+        '__static__'=>'/public/static',
+        
     ],
 
     // +----------------------------------------------------------------------

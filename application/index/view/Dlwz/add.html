@@ -17,7 +17,7 @@
                 data: $('#form1').serialize(),
                 success: function (result) {
                     console.log(result);//打印服务端返回的数据(调试用)
-                    alert(result);
+                    alert(result["info"]);
                     // if (result.resultCode == 200) {
                     //     alert("SUCCESS");                 这是干嘛的，resultcode
                     // }                                     能不能写成一个可调用的ajax.js

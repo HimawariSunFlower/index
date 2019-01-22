@@ -1,9 +1,15 @@
 <?php
 namespace app\index\controller;
 use think\Request ;
+use think\Session;
 
-class IndexController
+class IndexController extends \think\Controller
 {
+    //测试用类
+    //
+
+
+
     public function index()
     {
         //return 111;
@@ -52,5 +58,28 @@ class IndexController
         echo	'请求参数：排除name'; dump($request->except(['name']));
         return;
 
+    }
+    //layui测试
+    public function cs(){
+        return view();
+    }
+    //session的测试
+    public function  ss(Request $re){
+        dump($re->header()["cookie"]);
+        $session=$re->header()["cookie"];
+        $sessionId=substr($session,10);
+        Session::set("id",$sessionId);
+        $id=Session::get("id");
+        $this->ss2() ;
+        session("id",null);
+ 
+    }
+    public function ss2(){
+        //Session_star();
+        if(!Session::get("id")){
+            echo "nop";
+        }else{
+            echo "yes";
+        }
     }
 }

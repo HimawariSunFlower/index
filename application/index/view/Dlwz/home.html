@@ -2,34 +2,112 @@
 <html>
 	<head>
 		<title>也许是个主页</title>
+		<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+		</script>
+		<script type="text/javascript">
+	   
+		login = function (option){
+			console.log(option);
+			//console.log($("input:hidden"));
+			$.ajax({
+					//几个参数需要注意一下
+					type: "POST",//方法类型
+					dataType: "json",//预期服务器返回的数据类型
+					url: "{:url('index/Dlwz/eraseinf')}?id="+option ,//url
+					data: $('#form1').serialize(),
+					success: function (result) {
+						console.log(result);//打印服务端返回的数据(调试用)
+						alert(result["info"]);
+				
+					},
+					error : function() {
+						alert("异常！");
+					}
+			});	   
+		}
+		query = function(elment){
+			var x;
+			var y;
+			var x;
+			$.ajax({
+				   
+				   //几个参数需要注意一下
+				   type: "POST",//方法类型
+				   dataType: "json",//预期服务器返回的数据类型
+				   url: "{:url('index/Dlwz/queryinf')}" ,//url
+				   data: $('#form2').serialize(),
+				   success: function (result) {
+					   console.log(result["info"]);//打印服务端返回的数据(调试用)
+					   x=$("#div0").detach();
+					   z=result["info"];
+					   y="id是 "+z["id"]+", 昵称为 "+z["nickname"]+", 用户名为 "+z["username"]+", 密码为 "+z["password"]+"."
+					   $("#infoP").append(y);
+					   $("#div1").css({"display":"block"}); 
+					   $("#backBtn").click(function(){
+							$("body").prepend(x);
+							
+							$("#div1").css({"display":"none"});
+							$("#infoP").empty();
+
+						});
+					   
+	
+
+				    },
+				   error : function() {
+					   alert("异常！");
+				   }
+		   });	   
+			
+		}
+		</script>
 	</head>
 	<body>
-		<table  border="1" align="center">
-			<caption><b>用户数据</b></caption>
+		<div id="div0">
+			<table  border="1" align="center">
+				<caption><b>用户数据</b></caption>
+				<div align="center">
+					<FORM method="post" id="form2" action="##" onsubmit="return false" style="display:inline">
+					<INPUT type="text" class="text" name="username"><INPUT type="button" class="btn" value="查询"  onclick="query()">
+					</FORM>
+					<FORM method="post" class="form" action="{:url('index/Dlwz/add')}" style="display:inline">
+					<INPUT type="submit" class="btn" value=" 新增 ">
+					</FORM>
+				</div>
 				<tr>
 					<th>数据库id</th>
 					<th>昵称</th>
 					<th>用户名</th>
 					<th>密码</th>
+					<th>删除</th>
+					<th>修改</th>
 				</tr>	
-			{foreach $name as $key=>$vo } 
+				{foreach $name as $key=>$vo } 
 				<tr>
 					<th>{$vo.id}</th>
 					<th>{$vo.nickname}</th>
 					<th>{$vo.username}</th>
 					<th>{$vo.password}</th>
+					<th>		
+						<FORM method="post" id="form1" action="##" align="center" onsubmit="return false">
+						<INPUT type="button" class="btn" value=" 删除 " onclick="login('{$vo.id}')">
+						</FORM>
+					</th>
+					<th>
+						<FORM method="post" class="form" action="{:url('index/Dlwz/revise')}?id={$vo.id}" align="center">
+						<INPUT type="submit" class="btn" value=" 修改 ">
+						</FORM>
+					</th>
 				</tr>	
-			{/foreach}	
-		</table>
-		<FORM method="post" class="form" action="{:url('index/Dlwz/add')}" align="center">
-		<INPUT type="submit" class="btn" value=" 新增 ">
-		</FORM>
-		<FORM method="post" class="form" action="{:url('index/Dlwz/erase')}" align="center">
-		<INPUT type="submit" class="btn" value=" 删除 ">
-		</FORM>
-		<FORM method="post" class="form" action="{:url('index/Dlwz/revise')}" align="center">
-		<INPUT type="submit" class="btn" value=" 修改 ">
-		</FORM>
+				{/foreach}	
+			</table>
+		</div>
+		<div id="div1" style="display:none"  align="center">
+			<INPUT id="backBtn" type="button" class="btn" value=" 返回 " ><br>
+				<p id="infoP"></p>
+		</div>
+
+
 	</body>
 </html>
 

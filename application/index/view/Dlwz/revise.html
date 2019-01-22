@@ -7,8 +7,8 @@
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
     </script>
     <script type="text/javascript">
-   
-    login = function (){
+    login = function (InfoId){
+        console.log(InfoId);
         $.ajax({
             //几个参数需要注意一下
                 type: "POST",//方法类型
@@ -16,27 +16,29 @@
                 url: "{:url('index/Dlwz/reviseinf')}" ,//url
                 data: $('#form1').serialize(),
                 success: function (result) {
-                    console.log(result);//打印服务端返回的数据(调试用)
-                    alert(result);
+                    console.log(result);//打印服务端返回的数据(调试用)?id="+InfoId
+                    alert(result["info"]);
                 },
-                error : function() {
-                    alert("异常！");
+                error : function(event, XMLHttpRequest, ajaxOptions, thrownError) {
+                    // thrownError 只有当异常发生时才会被传递
+                    this; // 监听的 dom 元素
+                    console.log(this);
                 }
         });
-           
     }
-   
     </script>
 </head>
     <!-- 网页的具体内容 -->
 <body>
+    <span> id：{$InfoId}</span><br/>
     <FORM method="post" id="form1" onsubmit="return false" action="##">
-    昵称：  <INPUT type="text" class="text" name="nickname" value="nochange"><br/>
-    用户名：<INPUT type="text" class="text" name="username" value="nochange"><br/>
-    密码：  <INPUT type="password" class="text" name="password" value="nochange"><br/>
-    id(必须填写)：<INPUT type="text" class="text" name="id"><br/>
+    昵称：  <INPUT type="text" class="text" name="nickname" value="{$InfoNn}"><br/>
+    用户名：<INPUT type="text" class="text" name="username" value="{$InfoUn}"><br/>
+    密码：  <INPUT type="password" class="text" name="password" value="{$InfoPw}"><br/>
+    <input type="hidden" name="id" value="{$InfoId}" /> 
     <input type="hidden" name="__token__" value="{$Request.token}" />
-    <INPUT type="button" class="btn" value=" 提交 " onclick="login()">
+    <INPUT type="button" class="btn" value=" 提交 " onclick="login('{$InfoId}')">
     </FORM>
+
 </body>
 </html>

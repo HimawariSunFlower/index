@@ -17,7 +17,7 @@
                 data: $('#form1').serialize(),
                 success: function (result) {
                     console.log(result);//打印服务端返回的数据(调试用)
-                    alert(result);
+                    alert(result["info"]);
                 },
                 error : function() {
                     alert("异常！");
@@ -28,10 +28,10 @@
    
     </script>
 </head>
-    <!-- 网页的具体内容 -->
+    <!-- 网页的具体内容{:url('index/Dlwz/erase')}?id={$vo.id} -->
 <body>
     <FORM method="post" id="form1" onsubmit="return false" action="##" >
-    id：<INPUT type="text" class="text" name="id"><br/>
+    <INPUT type="text" class="text" name="id" velue="{$InfoId}"><br/>
     <INPUT type="button" class="btn" value=" 提交 " onclick='login()'>
     </FORM>
 </body>
