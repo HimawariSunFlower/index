@@ -60,7 +60,30 @@ class UserController extends Controller
     }
     public function hu()
     {
-        return "hhhh";
+        $input_lines ="10";
+        $input_line="0 9 9 0 5 9 9 2 3 0";
+        //$i= str_split($aaa);
+       // $x=0;
+        $qian=array(" ","　","\t","\n","\r");
+        $hou=array("","","","","");
+        $aaa=str_replace($qian,$hou,$input_line);  
+       echo $aaa;
+        //$i= str_split($input_lines);
+        $i=$input_lines*1;
+        $y=str_split($aaa);
+        echo $i;
+        echo 'aaaaa';
+        dump($y);
+           $x=0;
+               for($a=0;$a<$i;$a++)
+               {
+                   if($y[$a]>5){
+                       $x ++;
+                   }
+               }
+             
+           
+        echo $x;
     }
    
 }

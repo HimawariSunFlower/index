@@ -4,8 +4,16 @@
 <head>
     <mate charset="utf-8">
     <title>增加账户</title>
+    <link rel="stylesheet" href="/public/static/layui/css/layui.css">
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
     </script>
+    <script src="/public/static/layui/layui.js"></script>
+    <script>
+      layui.use('element', function(){
+      var element = layui.element;
+      
+    });
+    </script> 
     <script type="text/javascript">
    
     login = function (){
@@ -30,17 +38,52 @@
         });
            
     }
+    back =function(){
+        window.location.href = "{:url('index/Dlwz/home')}";
+    }
    
     </script>
 </head>
-    <!-- 网页的具体内容 -->
-<body>
-    <FORM method="post" id="form1" onsubmit="return false" action="##" align="center"> <!----action="{:url('index/Dlwz/addinf')}"-->
-    昵称：  <INPUT type="text" class="text" name="nickname"><br/>
-    用户名：<INPUT type="text" class="text" name="username"><br/>
-    密码：  <INPUT type="password" class="text" name="password"><br/>
-    <input type="hidden" name="__token__" value="{$Request.token}" />
-    <INPUT type="button" class="btn" value=" 提交 " onclick='login()'/>
-    </FORM>
+
+        <div class="layui-body">
+            <!-- 内容主体区域 -->
+            <div>
+                <div class="layui-body">
+                    <div class="absoluteCenter" style="padding-top:100px">
+                        <form class="layui-form" FORM method="post" id="form1" onsubmit="return false" action="##">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">昵称</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="nickname"    placeholder="请输入标题" autocomplete="off" class="layui-input" style="width:200px" >
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">用户名</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="username"    placeholder="请输入标题" autocomplete="off" class="layui-input" style="width:200px" >
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">密码框</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" name="password"   placeholder="请输入密码" autocomplete="off" class="layui-input" style="width:200px">
+                                </div>
+                            </div>
+                            
+                            <input type="hidden" name="__token__" value="{$Request.token}" />
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn layui-btn-radius"   onclick='login()'>立即提交</button>
+                                    <button onclick="back()" class="layui-btn layui-btn-primary layui-btn-radius">返回</button>
+                                </div>
+                            </div>
+                        </form>  
+                    </div>
+                </div>         
+            </div>
+        
+        
+        </div>
+    </div>
 </body>
 </html>

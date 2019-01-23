@@ -3,42 +3,189 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <title>开始使用layui</title>
+
   <link rel="stylesheet" href="/public/static/layui/css/layui.css">
+  <title>也许是个主页</title>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
+  </script>
+  <script type="text/javascript">
+   
+  login = function (option){
+    console.log(option);
+    //console.log($("input:hidden"));
+    $.ajax({
+        //几个参数需要注意一下
+        type: "POST",//方法类型
+        dataType: "json",//预期服务器返回的数据类型
+        url: "{:url('index/Dlwz/eraseinf')}?id="+option ,//url
+        data: $('#form1').serialize(),
+        success: function (result) {
+          console.log(result);//打印服务端返回的数据(调试用)
+          alert(result["info"]);
+      
+        },
+        error : function() {
+          alert("异常！");
+        }
+    });	   
+  }
+  query = function(elment){
+    var x;
+    var y;
+    var x;
+    $.ajax({
+         
+         //几个参数需要注意一下
+         type: "POST",//方法类型
+         dataType: "json",//预期服务器返回的数据类型
+         url: "{:url('index/Dlwz/queryinf')}" ,//url
+         data: $('#form2').serialize(),
+         success: function (result) {
+           console.log(result["info"]);//打印服务端返回的数据(调试用)
+           x=$("#div0").detach();
+           z=result["info"];
+           y="id是 "+z["id"]+", 昵称为 "+z["nickname"]+", 用户名为 "+z["username"]+", 密码为 "+z["password"]+"."
+           $("#infoP").append(y);
+           $("#div1").css({"display":"block"}); 
+           $("#backBtn").click(function(){
+            $("body").prepend(x);
+            
+            $("#div1").css({"display":"none"});
+            $("#infoP").empty();
+
+          });
+           
+
+
+          },
+         error : function() {
+           alert("异常！");
+         }
+     });	   
+    
+  }
+  </script>
 </head>
 <body>
-  <form class="layui-form" FORM method="post" id="form1" onsubmit="return false" action="##">
-    <div class="layui-form-item">
-      <label class="layui-form-label">用户名</label>
-      <div class="layui-input-block">
-        <input type="text" name="username" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" style="width:200px" >
+  <body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+      <div class="layui-header">
+        <div class="layui-logo">layui 后台布局</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+          <li class="layui-nav-item"><a href="">控制台</a></li>
+          <li class="layui-nav-item"><a href="">商品管理</a></li>
+          <li class="layui-nav-item"><a href="">用户</a></li>
+          <li class="layui-nav-item">
+            <a href="javascript:;">其它系统</a>
+            <dl class="layui-nav-child">
+              <dd><a href="">邮件管理</a></dd>
+              <dd><a href="">消息管理</a></dd>
+              <dd><a href="">授权管理</a></dd>
+            </dl>
+          </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+          <li class="layui-nav-item">
+            <a href="javascript:;">
+              <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+              贤心
+            </a>
+            <dl class="layui-nav-child">
+              <dd><a href="">基本资料</a></dd>
+              <dd><a href="">安全设置</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item"><a href="">退了</a></li>
+        </ul>
       </div>
-    </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">密码框</label>
-      <div class="layui-input-inline">
-        <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input" style="width:200px">
-      </div>
-    </div>
-      <div class="layui-form-item">
-        <label class="layui-form-label">验证码</label>
-        <div>
-          <input type="text" id="captcha" placeholder="验证码" name="captcha" style="width:200px"/>
+      
+      <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+          <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+          <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+            <li class="layui-nav-item layui-nav-itemed">
+              <a class="" href="javascript:;">所有商品</a>
+              <dl class="layui-nav-child">
+                <dd><a href="javascript:;">列表一</a></dd>
+                <dd><a href="javascript:;">列表二</a></dd>
+                <dd><a href="javascript:;">列表三</a></dd>
+                <dd><a href="">超链接</a></dd>
+              </dl>
+            </li>
+            <li class="layui-nav-item">
+              <a href="javascript:;">解决方案</a>
+              <dl class="layui-nav-child">
+                <dd><a href="javascript:;">列表一</a></dd>
+                <dd><a href="javascript:;">列表二</a></dd>
+                <dd><a href="">超链接</a></dd>
+              </dl>
+            </li>
+            <li class="layui-nav-item"><a href="">云市场</a></li>
+            <li class="layui-nav-item"><a href="">发布商品</a></li>
+          </ul>
         </div>
       </div>
-      <input type="hidden" name="__token__" value="{$Request.token}" />
-      <div class="layui-form-item">
-        <div class="layui-input-block">
-          <button class="layui-btn" lay-submit lay-filter="formDemo"  onclick='login()'>立即提交</button>
-          <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+      
+      <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;padding-left: 50px;padding-right: 450px">
+          <table class="layui-table">
+            <colgroup>
+              <col width="100px">
+              <col span="3"width="200px">
+              <col span="2" width="70px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>数据库id</th>
+                <th>昵称</th>
+                <th>用户名</th>
+                <th>密码</th>
+                <th>删除</th>
+                <th>修改</th>
+              </tr> 
+            </thead>
+            <tbody>
+                {foreach $name as $key=>$vo } 
+                <tr>
+                  <td>{$vo.id}</td>
+                  <td>{$vo.nickname}</td>
+                  <td>{$vo.username}</td>
+                  <td>{$vo.password}</td>
+                  <td>		
+                    <FORM method="post" id="form1" action="##" align="center" onsubmit="return false">
+                    <INPUT type="button" class="btn" value=" 删除 " onclick="login('{$vo.id}')">
+                    </FORM>
+                  </td>
+                  <td>
+                    <FORM method="post" class="form" action="{:url('index/Dlwz/revise')}?id={$vo.id}" align="center">
+                    <INPUT type="submit" class="btn" value=" 修改 ">
+                    </FORM>
+                  </td>
+                </tr>	
+                {/foreach}	
+             
+              {$name->render()}
+            </tbody>
+          </table>        
         </div>
       </div>
-    </form>
+      
+      <div class="layui-footer">
+        <!-- 底部固定区域 -->
+         底部固定区域
+      </div>
+    </div>
 
 
  
 <script src="/public/static/layui/layui.js"></script>
 <script>
+  layui.use('element', function(){
+  var element = layui.element;
+  
+});
 //一般直接写在一个js文件中
 // layui.use(['layer', 'form'], function(){
 //   var layer = layui.layer,

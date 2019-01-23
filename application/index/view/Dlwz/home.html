@@ -1,79 +1,168 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>也许是个主页</title>
-		<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
-		</script>
-		<script type="text/javascript">
-	   
-		login = function (option){
-			console.log(option);
-			//console.log($("input:hidden"));
-			$.ajax({
-					//几个参数需要注意一下
-					type: "POST",//方法类型
-					dataType: "json",//预期服务器返回的数据类型
-					url: "{:url('index/Dlwz/eraseinf')}?id="+option ,//url
-					data: $('#form1').serialize(),
-					success: function (result) {
-						console.log(result);//打印服务端返回的数据(调试用)
-						alert(result["info"]);
-				
-					},
-					error : function() {
-						alert("异常！");
-					}
-			});	   
-		}
-		query = function(elment){
-			var x;
-			var y;
-			var x;
-			$.ajax({
-				   
-				   //几个参数需要注意一下
-				   type: "POST",//方法类型
-				   dataType: "json",//预期服务器返回的数据类型
-				   url: "{:url('index/Dlwz/queryinf')}" ,//url
-				   data: $('#form2').serialize(),
-				   success: function (result) {
-					   console.log(result["info"]);//打印服务端返回的数据(调试用)
-					   x=$("#div0").detach();
-					   z=result["info"];
-					   y="id是 "+z["id"]+", 昵称为 "+z["nickname"]+", 用户名为 "+z["username"]+", 密码为 "+z["password"]+"."
-					   $("#infoP").append(y);
-					   $("#div1").css({"display":"block"}); 
-					   $("#backBtn").click(function(){
-							$("body").prepend(x);
-							
-							$("#div1").css({"display":"none"});
-							$("#infoP").empty();
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-						});
-					   
-	
+  <link rel="stylesheet" href="/public/static/layui/css/layui.css">
+  <title>也许是个主页</title>
+  <style type="text/css">
+  ul.pagination {
+    display: inline-block;
+    padding: 0;
+    margin: 0;
+}
 
-				    },
-				   error : function() {
-					   alert("异常！");
-				   }
-		   });	   
-			
-		}
-		</script>
-	</head>
-	<body>
-		<div id="div0">
-			<table  border="1" align="center">
-				<caption><b>用户数据</b></caption>
-				<div align="center">
-					<FORM method="post" id="form2" action="##" onsubmit="return false" style="display:inline">
-					<INPUT type="text" class="text" name="username"><INPUT type="button" class="btn" value="查询"  onclick="query()">
-					</FORM>
-					<FORM method="post" class="form" action="{:url('index/Dlwz/add')}" style="display:inline">
-					<INPUT type="submit" class="btn" value=" 新增 ">
-					</FORM>
-				</div>
+ul.pagination li {display: inline;}
+
+ul.pagination li a {
+    color: #009688;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+}
+ul.pagination li span {
+    color: black;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    }
+ #infoP{
+   padding: 20px;
+
+ }
+
+  </style>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+  <script src="/public/static/layui/lay/modules/layer.js"></script>
+  <script type="text/javascript">
+   
+  login = function (option){
+    console.log(option);
+    //console.log($("input:hidden"));
+    $.ajax({
+        //几个参数需要注意一下
+        type: "POST",//方法类型
+        dataType: "json",//预期服务器返回的数据类型
+        url: "{:url('index/Dlwz/eraseinf')}?id="+option ,//url
+        data: $('#form1').serialize(),
+        success: function (result) {
+          console.log(result);//打印服务端返回的数据(调试用)
+          alert(result["info"]);
+           location.reload();
+          //layer.msg(result["info"]);   无效???
+      
+        },
+        error : function() {
+          alert("异常！");
+        }
+    });	   
+  }
+  query = function(elment){
+    var x;
+    var y;
+    var x;
+    $.ajax({
+         
+         //几个参数需要注意一下
+         type: "POST",//方法类型
+         dataType: "json",//预期服务器返回的数据类型
+         url: "{:url('index/Dlwz/queryinf')}" ,//url
+         data: $('#form2').serialize(),
+         success: function (result) {
+           console.log(result["info"]);//打印服务端返回的数据(调试用)
+           x=$(".layui-body").detach();
+           z=result["info"];
+           y="id 是 "+z["id"]+", 昵称 为 "+z["nickname"]+", 用户名 为 "+z["username"]+", 密码为 "+z["password"]+"."
+           $("#infoP").append(y);
+           $("#div1").css({"display":"block"}); 
+           $("#backBtn").click(function(){
+            $("body").prepend(x);
+            
+            $("#div1").css({"display":"none"});
+            $("#infoP").empty();
+
+          });
+           
+
+
+          },
+         error : function() {
+           alert("异常！");
+         }
+     });	   
+    
+  }
+  </script>
+</head>
+  <body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+      <div class="layui-header">
+        <div class="layui-logo">layui 后台布局</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+        <ul class="layui-nav layui-layout-left">
+          <li class="layui-nav-item"><a href="">控制台</a></li>
+          <li class="layui-nav-item"><a href="">商品管理</a></li>
+          <li class="layui-nav-item"><a href="">用户</a></li>
+          <li class="layui-nav-item">
+            <a href="javascript:;">其它系统</a>
+            <dl class="layui-nav-child">
+              <dd><a href="">邮件管理</a></dd>
+              <dd><a href="">消息管理</a></dd>
+              <dd><a href="">授权管理</a></dd>
+            </dl>
+          </li>
+        </ul>
+        <ul class="layui-nav layui-layout-right">
+          <li class="layui-nav-item">
+            <a href="javascript:;">
+              <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
+              admin
+            </a>
+            <dl class="layui-nav-child">
+              <dd><a href="">基本资料</a></dd>
+              <dd><a href="">安全设置</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item"><a href="{:url('index/Dlwz/logout')}">注销</a></li>
+        </ul>
+      </div>
+      
+      <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+          <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+          <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+            <li class="layui-nav-item layui-nav-itemed">
+              <a class="" href="javascript:;">所有商品</a>
+              <dl class="layui-nav-child">
+                <dd><a href="javascript:;">列表一</a></dd>
+                <dd><a href="javascript:;">列表二</a></dd>
+                <dd><a href="javascript:;">列表三</a></dd>
+                <dd><a href="">超链接</a></dd>
+              </dl>
+            </li>
+            <li class="layui-nav-item">
+              <a href="javascript:;">解决方案</a>
+              <dl class="layui-nav-child">
+                <dd><a href="javascript:;">列表一</a></dd>
+                <dd><a href="javascript:;">列表二</a></dd>
+                <dd><a href="">超链接</a></dd>
+              </dl>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;padding-left: 50px;padding-right: 450px">
+			<table class="layui-table">
+				<colgroup>
+				<col width="100px">
+				<col span="3"width="200px">
+				<col span="2" width="70px">
+				</colgroup>
+				<thead>
 				<tr>
 					<th>数据库id</th>
 					<th>昵称</th>
@@ -81,39 +170,63 @@
 					<th>密码</th>
 					<th>删除</th>
 					<th>修改</th>
-				</tr>	
-				{foreach $name as $key=>$vo } 
-				<tr>
-					<th>{$vo.id}</th>
-					<th>{$vo.nickname}</th>
-					<th>{$vo.username}</th>
-					<th>{$vo.password}</th>
-					<th>		
+				</tr> 
+				</thead>
+				<tbody>
+					{foreach $name as $key=>$vo } 
+					<tr>
+					<td>{$vo.id}</td>
+					<td>{$vo.nickname}</td>
+					<td>{$vo.username}</td>
+					<td>{$vo.password}</td>
+					<td>		
 						<FORM method="post" id="form1" action="##" align="center" onsubmit="return false">
-						<INPUT type="button" class="btn" value=" 删除 " onclick="login('{$vo.id}')">
+						<INPUT type="button" class="layui-btn layui-btn-primary" value=" 删除 " onclick="login('{$vo.id}')">
 						</FORM>
-					</th>
-					<th>
+					</td>
+					<td>
 						<FORM method="post" class="form" action="{:url('index/Dlwz/revise')}?id={$vo.id}" align="center">
-						<INPUT type="submit" class="btn" value=" 修改 ">
+						<INPUT type="submit" class="layui-btn layui-btn-primary" value=" 修改 ">
 						</FORM>
-					</th>
-				</tr>	
-				{/foreach}	
+					</td>
+					</tr>	
+					{/foreach}	
+				</tbody>
 			</table>
-			{$name->render()}
-			<FORM method="post" class="form" action="{:url('index/Dlwz/logout')}"  align="center">
-			<INPUT type="submit" class="btn" value=" 注销 " align="center">
-			</FORM>
-		</div>
-		<div id="div1" style="display:none"  align="center">
-			<INPUT id="backBtn" type="button" class="btn" value=" 返回 " ><br>
-				<p id="infoP"></p>
+		  	<div>
+				<FORM method="post" id="form2" action="##" onsubmit="return false" style="display:inline">
+				<INPUT type="text" class="text" name="username" ><INPUT style="margin-left:10px " type="button"  class="layui-btn " value="查询"  onclick="query()">
+				</FORM>
+				<FORM method="post" class="form" action="{:url('index/Dlwz/add')}" style="display:inline">
+				<INPUT type="submit" class="layui-btn"value=" 新增 " style="margin-left:10px ">
+				</FORM>
+			</div>   
+			{$name->render()}     
 		</div>
 
 
-	</body>
+    </div>
+    <div id="div1" style="display:none"  align="center">
+      <p id="infoP"></p>
+      <INPUT id="backBtn" type="button" class="layui-btn " value=" 返回 " ><br>
+      
+    </div>
+
+      
+      <div class="layui-footer">
+        <!-- 底部固定区域 -->
+         底部固定区域
+      </div>
+    </div>
+
+
+ 
+<script src="/public/static/layui/layui.js"></script>
+<script>
+  layui.use('element', function(){
+  var element = layui.element;
+  
+});
+</script> 
+</body>
 </html>
-
-		
-		
