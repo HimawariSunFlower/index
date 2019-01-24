@@ -48,7 +48,7 @@ class UserController extends Controller
     public function create()
     {
         $captcha = new Captcha();
-        return $captcha->entry();
+
         return view();
     }
     public  function echos()

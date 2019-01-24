@@ -44,7 +44,7 @@ class DlwzController extends \think\Controller
                                 if($user["username"]==$judge["username"]){
                                     if($user["password"]==$judge["password"]){
                                         //echo $jump;
-                                        return json(['status'=>1, 'info'=>'页面跳转']);
+                                        return json(['status'=>1, 'info'=>$judge["id"]]);
                                     }else{
                                         return json(['status'=>0, 'info'=>'密码错误']);
                                     }
@@ -216,6 +216,47 @@ class DlwzController extends \think\Controller
             return json(['status'=>0, 'info'=>'请正确输入']);
         }
         return json(['status'=>0, 'info'=>'传参错误']);
+    }
+
+    public function imgup(Request $request){
+        $info=$request->param();
+
+        $db1=Db::table('think_dlwz')->where('id',$info["id"])->find();
+        //dump($db1);
+        $this->assign([
+            'InfoId'=>$db1["id"],
+
+
+        ]);
+        return $this->fetch();
+        return view();
+ 
+    }
+
+
+
+    public function upload(){
+        // 获取表单上传文件 例如上传了001.jpg
+        $file = request()->file('image');
+        $inf = request()->param();
+        $a="";
+        for($i=0;$i<count($inf);$i++){
+            $a.=$inf[$i];
+        }
+        //dump($a);
+        // 移动到框架应用根目录/public/uploads/ 目录下
+        if($file){
+            $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+            if($info){
+                $info->getSaveName();
+                Db::table('think_dlwz')->where('id',$a)->update(['img'=>$info->getSaveName()]);
+                return json(["status"=>1,'info'=>"成功"]);
+
+            }else{
+              
+            
+            }
+        }
     }
 
     

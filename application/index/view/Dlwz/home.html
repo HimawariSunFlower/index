@@ -155,29 +155,32 @@ ul.pagination li span {
       
       <div class="layui-body">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px;padding-left: 50px;padding-right: 450px">
-			<table class="layui-table">
+        <div style="padding: 15px;padding-left: 50px;padding-right: 200px">
+		  	<table class="layui-table">
 				<colgroup>
 				<col width="100px">
 				<col span="3"width="200px">
-				<col span="2" width="70px">
+				<col span="3" width="70px">
 				</colgroup>
 				<thead>
 				<tr>
 					<th>数据库id</th>
-					<th>昵称</th>
+          <th>昵称</th>
+          <th>头像</th>
 					<th>用户名</th>
 					<th>密码</th>
 					<th>删除</th>
-					<th>修改</th>
+          <th>修改</th>
+          <th >上传头像</th>
 				</tr> 
 				</thead>
 				<tbody>
 					{foreach $name as $key=>$vo } 
 					<tr>
-					<td>{$vo.id}</td>
+          <td>{$vo.id}</td>
 					<td>{$vo.nickname}</td>
-					<td>{$vo.username}</td>
+          <td><img src="/public/uploads/{$vo.img}" style="height:50px;width:50px"></td>>
+          <td>{$vo.username}</td>
 					<td>{$vo.password}</td>
 					<td>		
 						<FORM method="post" id="form1" action="##" align="center" onsubmit="return false">
@@ -188,7 +191,10 @@ ul.pagination li span {
 						<FORM method="post" class="form" action="{:url('index/Dlwz/revise')}?id={$vo.id}" align="center">
 						<INPUT type="submit" class="layui-btn layui-btn-primary" value=" 修改 ">
 						</FORM>
-					</td>
+          </td>
+          <td >
+            <a href="{:url('index/Dlwz/imgup')}?id={$vo.id}" style="color:#009688">头像上传</a>
+          </td>
 					</tr>	
 					{/foreach}	
 				</tbody>
