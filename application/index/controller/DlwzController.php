@@ -17,6 +17,7 @@ use think\Controller;
 use think\captcha\Captcha;
 use think\Session;
 use think\Paginate;
+use think\view;
 
  
 
@@ -39,11 +40,12 @@ class DlwzController extends \think\Controller
                     return json(['status'=>0, 'info'=>'验证码错误']);
                 }else{
                     if($user["username"]&&$user["password"]){
-                        $judge =Db::table('think_dlwz')->where('username',$user["username"])->find();
+                        $judge =Db::table('think_user')->where('username',$user["username"])->find();
                             if($judge){
                                 if($user["username"]==$judge["username"]){
                                     if($user["password"]==$judge["password"]){
                                         //echo $jump;
+                                        Session::set("user",$judge["id"]);
                                         return json(['status'=>1, 'info'=>$judge["id"]]);
                                     }else{
                                         return json(['status'=>0, 'info'=>'密码错误']);
@@ -73,17 +75,48 @@ class DlwzController extends \think\Controller
     public function home()
     {
         if(session::get("id")){
-           // session("id",null);
+            $info=session::get("user");
+            $msg=[];
+            //dump($re);
+            // dump($info);
+            $judge =Db::table('think_user')->where('id',$info)->find();
+            $persona=Db::table('think_up')->where('uid',$judge["id"])->find();
+            //echo $persona["pid"];
+            //dump($persona);
+            $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
+            // dump($limit);
+            // return;
+            
+            $top=Db::table('think_limit')->count();
+        //    echo $top;
+        //    echo count($limit);
+            for($i=0;$i<$top;$i++){
+                $lv =Db::table('think_limit')->where('id',500)->find();
+                $msg["lv$i"]=$lv["url"];   
+                for($x=0;$x<count($limit);$x++){
+                    if( $limit[$x]["lid"]==$i){
+                        $aaa = $limit[$x]["lid"];
+                        $lv =Db::table('think_limit')->where('id',$aaa)->find();
+                        $msg["lv$i"]=$lv["url"];   
+                        }
 
-            $inf=Db::table('think_dlwz')
+                }
+                
+            }
+            $msg["username"]=$judge["username"];
+            $msg["password"]= $judge["password"];
+            $msg["id"]=$judge["id"];
+            $view = new View();
+            $view->assign('msg',$msg);
+            
+            $inf=Db::table('think_user')
             ->where('id', '>', 0)
             ->paginate(10);
-            $this->assign('name',$inf);
-            //return dump($inf);
-            return $this->fetch();
+            $view->assign('name',$inf);
+            return $view->fetch();
         }else{
-            echo "重新登陆";
-            return;
+                echo "重新登陆";
+                return;
         }
     }
     public function logout(){
@@ -101,14 +134,14 @@ class DlwzController extends \think\Controller
             if ($request->param()){
                 $user=$request->param();
                 if($user["username"]&&$user["nickname"]&&$user["password"]){
-                    $judge =Db::table('think_dlwz')->where('username',$user["username"])->find();
+                    $judge =Db::table('think_user')->where('username',$user["username"])->find();
                         if($judge){
                             return json(['status'=>0, 'info'=>'该用户名已存在']);
                         }else{
                             if($user["nickname"]==$judge["nickname"]){
                                 return json(['status'=>0, 'info'=>'昵称已占用']);
                             }else{
-                                Db::table('think_dlwz')->insert($user);
+                                Db::table('think_user')->insert($user);
                                 return json(['status'=>0, 'info'=>'创建成功']);
                             }
                         }
@@ -139,9 +172,9 @@ class DlwzController extends \think\Controller
             if ($request->param()){
                 $user=$request->param();
                 if($user["id"]){
-                    $judge =Db::table('think_dlwz')->where('id',$user["id"])->find();
+                    $judge =Db::table('think_user')->where('id',$user["id"])->find();
                     if($judge){
-                        Db::table('think_dlwz')->where('id',$user["id"])->delete();
+                        Db::table('think_user')->where('id',$user["id"])->delete();
                         return json(['status'=>0, 'info'=>'删除成功']);
                     }else{
                         return json(['status'=>0, 'info'=>'无此id']);
@@ -163,7 +196,7 @@ class DlwzController extends \think\Controller
     {
         $info=$request->param();
 
-        $db1=Db::table('think_dlwz')->where('id',$info["id"])->find();
+        $db1=Db::table('think_user')->where('id',$info["id"])->find();
         //dump($db1);
         $this->assign([
             'InfoId'=>$db1["id"],
@@ -185,11 +218,11 @@ class DlwzController extends \think\Controller
                 $user=$request->param();
                // return json(['status'=>0, 'info'=>' 2']);
                 if($user["username"]||$user["nickname"]||$user["password"]){
-                    $judge =Db::table('think_dlwz')->where('id',$user["id"])->find();
+                    $judge =Db::table('think_user')->where('id',$user["id"])->find();
                         if($judge){
-                                Db::table('think_dlwz')->where('id',$user["id"])->update(['username'=>$user["username"]]);
-                                Db::table('think_dlwz')->where('id',$user["id"])->update(['nickname'=>$user["nickname"]]);
-                                Db::table('think_dlwz')->where('id',$user["id"])->update(['password'=>$user["password"]]);
+                                Db::table('think_user')->where('id',$user["id"])->update(['username'=>$user["username"]]);
+                                Db::table('think_user')->where('id',$user["id"])->update(['nickname'=>$user["nickname"]]);
+                                Db::table('think_user')->where('id',$user["id"])->update(['password'=>$user["password"]]);
                             
                                 return json(['status'=>0, 'info'=>'修改完成']);
                                 }else{
@@ -210,7 +243,7 @@ class DlwzController extends \think\Controller
     public function queryinf(Request $re){
         $info=$re->param();
         if($info["username"]){
-            $inf=Db::table('think_dlwz')->where('username',$info["username"])->find();
+            $inf=Db::table('think_user')->where('username',$info["username"])->find();
             return json(["status"=>1,'info'=>$inf]);
         }else{
             return json(['status'=>0, 'info'=>'请正确输入']);
@@ -221,7 +254,7 @@ class DlwzController extends \think\Controller
     public function imgup(Request $request){
         $info=$request->param();
 
-        $db1=Db::table('think_dlwz')->where('id',$info["id"])->find();
+        $db1=Db::table('think_user')->where('id',$info["id"])->find();
         //dump($db1);
         $this->assign([
             'InfoId'=>$db1["id"],
@@ -243,13 +276,13 @@ class DlwzController extends \think\Controller
         for($i=0;$i<count($inf);$i++){
             $a.=$inf[$i];
         }
-        //dump($a);
+        //dump($inf);
         // 移动到框架应用根目录/public/uploads/ 目录下
         if($file){
             $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
             if($info){
                 $info->getSaveName();
-                Db::table('think_dlwz')->where('id',$a)->update(['img'=>$info->getSaveName()]);
+                Db::table('think_user')->where('id',$a)->update(['img'=>$info->getSaveName()]);
                 return json(["status"=>1,'info'=>"成功"]);
 
             }else{

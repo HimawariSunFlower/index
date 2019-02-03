@@ -2,6 +2,8 @@
 namespace app\index\controller;
 use think\Request ;
 use think\Session;
+use think\Db;
+use think\view;
 
 class IndexController extends \think\Controller
 {
@@ -9,12 +11,81 @@ class IndexController extends \think\Controller
     //
 
 
-
-    public function index()
+         //先写死,用lv2测试
+    public function index(request $re)
     {
-        //return 111;
-        return '<style type="text/css">*{ padding: 0; margin: 0; } .think_default_text{ padding: 4px 48px;} a{color:#2E5CD5;cursor: pointer;text-decoration: none} a:hover{text-decoration:underline; } body{ background: #fff; font-family: "Century Gothic","Microsoft yahei"; color: #333;font-size:18px} h1{ font-size: 100px; font-weight: normal; margin-bottom: 12px; } p{ line-height: 1.6em; font-size: 42px }</style><div style="padding: 24px 48px;"> <h1>:)</h1><p> ThinkPHP V5<br/><span style="font-size:30px">十年磨一剑 - 为API开发设计的高性能框架</span></p><span style="font-size:22px;">[ V5.0 版本由 <a href="http://www.qiniu.com" target="qiniu">七牛云</a> 独家赞助发布 ]</span></div><script type="text/javascript" src="https://tajs.qq.com/stats?sId=9347272" charset="UTF-8"></script><script type="text/javascript" src="https://e.topthink.com/Public/static/client.js"></script><think id="ad_bd568ce7058a1091"></think>';
+        $info=$re->param();
+        if($info){
+            $judge =Db::table('think_user')->where('username',$info["username"])->find();
+            
+            
+            if($info["password"]==$judge["password"]){
+                $inf = array("id"=>$judge["id"]);
+                $this->redirect('index/index/echo', $inf);
+                
+            }else{
+                $this->error('信息有误！');
+            }
+        
+               
+            
+        }
+        
     }
+    public function home(){
+        return view();
+    }
+    public function echo(request $re){
+        $info=$re->param();
+        $msg=[];
+       // dump($re);
+        //dump($info);
+        $judge =Db::table('think_user')->where('id',$info["id"])->find();
+        $persona=Db::table('think_up')->where('uid',$judge["id"])->find();
+        //echo $persona["pid"];
+        //dump($persona);
+        $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
+         //dump($limit);
+        //return;
+        
+        $top=Db::table('think_limit')->count();
+    //    echo $top;
+    //    echo count($limit);
+        for($i=0;$i<$top;$i++){
+            $lv =Db::table('think_limit')->where('id',500)->find();
+            $msg["lv$i"]=$lv["url"];   
+            for($x=0;$x<count($limit);$x++){
+                if( $limit[$x]["lid"]==$i){
+                    $aaa = $limit[$x]["lid"];
+                    $lv =Db::table('think_limit')->where('id',$aaa)->find();
+                    $msg["lv$i"]=$lv["url"];   
+                    }
+
+            }
+          
+        }
+        $msg["username"]=$judge["username"];
+        $msg["password"]= $judge["password"];
+        $msg["id"]=$judge["id"];
+        //$msg["aaa"]=$limit[0]["lid"];
+       // $msg["bbb"] = $limit[1]["lid"];
+        dump($msg);
+        return;
+        $view = new View();
+        $view->assign('msg',$msg);
+        return $view->fetch();
+    
+     
+    }
+    public function a1(){
+        return view();
+    }
+
+
+
+
+
+
     public function add()
     {
         $element =controller("UserController","controller");

@@ -9,30 +9,6 @@
     <script src="/public/static/layui/layui.js"></script>
     <script type="text/javascript">
    
-    login = function (){
-        $.ajax({
-            //几个参数需要注意一下
-                type: "POST",//方法类型
-                dataType: "json",//预期服务器返回的数据类型
-                url: "{:url('index/Dlwz/index')}" ,//url
-                data: $('#form1').serialize(),
-                success: function (result) {
-                    //console.log(typeof result);
-                   // console.log (result);
-                    console.log( result.status);//打印服务端返回的数据(调试用)
-                    if(result["status"]==0){
-                        alert(result["info"]);
-                        $('#captchaImg').attr("src", "{:captcha_src()}"); 
-                    }else if(result["status"]==1){
-                        window.location.href = "{:url('index/Dlwz/home')}";//?id="+result["info"];
-                    //document.write(result) ;
-                }
-                },
-                error : function() {
-                    alert("异常！");
-                }
-        });   
-    }
    
     </script>
     <style>
@@ -44,11 +20,11 @@
 <body>
     <div class="layui-body">
         <div class="absoluteCenter">
-            <form class="layui-form" FORM method="post" id="form1" onsubmit="return false" action="##">
+            <form class="layui-form" FORM method="post" id="form1"  action="{:url('index/index/index')}">
                 <div class="layui-form-item">
                     <label class="layui-form-label">用户名</label>
                     <div class="layui-input-block">
-                        <input type="text" name="username" required  lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input" style="width:200px" >
+                        <input type="text" name="username" required  lay-verify="required" placeholder="请输入标题" autocomplete="off" class="layui-input" style="width:200px" >
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -57,7 +33,7 @@
                         <input type="password" name="password" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input" style="width:200px">
                     </div>
                 </div>
-                <div class="layui-form-item">
+                <!-- <div class="layui-form-item">
                     <label class="layui-form-label">验证码</label>
                     <div>
                         <input type="text" id="captcha" required lay-verify="required" placeholder="请输入验证码" name="captcha" style="width:200px ;height:38px" class="layui-input" />
@@ -66,11 +42,11 @@
                     <div class="layui-input-inline">
                             <img class="captcha_img"  id="captchaImg" alt="点击刷新验证码" src="{:captcha_src()}">
                     </div>
-                </div>
+                </div> -->
                 <input type="hidden" name="__token__" value="{$Request.token}" />
                 <div class="layui-form-item">
                     <div class="layui-input-block">
-                        <button class="layui-btn layui-btn-radius"   onclick='login()'>立即提交</button>
+                        <button class="layui-btn layui-btn-radius"   type="submit">立即提交</button>
                         <button type="reset" class="layui-btn layui-btn-primary layui-btn-radius">重置</button>
                     </div>
                 </div>
