@@ -88,8 +88,8 @@ class DlwzController extends \think\Controller
             // return;
             
             $top=Db::table('think_limit')->count();
-        //    echo $top;
-        //    echo count($limit);
+            //    echo $top;
+            //    echo count($limit);
             for($i=0;$i<$top;$i++){
                 $lv =Db::table('think_limit')->where('id',500)->find();
                 $msg["lv$i"]=$lv["url"];   

@@ -69,8 +69,8 @@ class IndexController extends \think\Controller
         $msg["id"]=$judge["id"];
         //$msg["aaa"]=$limit[0]["lid"];
        // $msg["bbb"] = $limit[1]["lid"];
-        dump($msg);
-        return;
+        // dump($msg);
+        // return;
         $view = new View();
         $view->assign('msg',$msg);
         return $view->fetch();
