@@ -37,13 +37,10 @@ class UserController extends Controller
             echo '----------------------------------<br/>';
         }
     }
-    public function update($id)
+    public function update()
     {
-        $user           = User::get($id);
-        $user->nickname = '刘晨';
-        $user->email    = 'liu21st@gmail.com';
-        $user->save();
-        return '更新用户成功';
+
+        return view();
     }
     public function create()
     {

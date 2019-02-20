@@ -5,12 +5,13 @@
     <mate charset="utf-8">
     <title>增加账户</title>
     <link rel="stylesheet" href="/public/static/layui/css/layui.css">
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
-    </script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"> </script>
     <script src="/public/static/layui/layui.js"></script>
+    
     <script>
-      layui.use('element', function(){
+      layui.use(['element','layer'], function(){
       var element = layui.element;
+      var layer = layui.layer;
       
     });
     </script> 
@@ -19,22 +20,22 @@
     login = function (){
         $.ajax({
             //几个参数需要注意一下
-                type: "POST",//方法类型
-                dataType: "json",//预期服务器返回的数据类型
-                url: "{:url('index/Dlwz/addinf')}" ,//url
-                data: $('#form1').serialize(),
-                success: function (result) {
-                    console.log(result);//打印服务端返回的数据(调试用)
-                    alert(result["info"]);
-                    // if (result.resultCode == 200) {
-                    //     alert("SUCCESS");                 这是干嘛的，resultcode
-                    // }                                     能不能写成一个可调用的ajax.js
-                    //;
-                    
-                },
-                error : function() {
-                    alert("异常！");
-                }
+            type: "POST",//方法类型
+            dataType: "json",//预期服务器返回的数据类型
+            url: "{:url('index/Dlwz/addinf')}" ,//url
+            data: $('#form1').serialize(),
+            success: function (result) {
+                console.log(result);//打印服务端返回的数据(调试用)
+                layer.msg(result["info"]);
+                // if (result.resultCode == 200) {
+                //     alert("SUCCESS");                 这是干嘛的，resultcode
+                // }                                     能不能写成一个可调用的ajax.js
+                //;
+                
+            },
+            error : function() {
+                layer.msg("异常！");
+            }
         });
            
     }
@@ -45,45 +46,43 @@
     </script>
 </head>
 
+<body>
+<div class="layui-body">
+    <!-- 内容主体区域 -->
+    <div>
         <div class="layui-body">
-            <!-- 内容主体区域 -->
-            <div>
-                <div class="layui-body">
-                    <div class="absoluteCenter" style="padding-top:100px">
-                        <form class="layui-form" FORM method="post" id="form1" onsubmit="return false" action="##">
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">昵称</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="nickname"    placeholder="请输入昵称" autocomplete="off" class="layui-input" style="width:200px" >
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">用户名</label>
-                                <div class="layui-input-block">
-                                    <input type="text" name="username"    placeholder="请输入用户名" autocomplete="off" class="layui-input" style="width:200px" >
-                                </div>
-                            </div>
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">密码框</label>
-                                <div class="layui-input-inline">
-                                    <input type="password" name="password"   placeholder="请输入密码" autocomplete="off" class="layui-input" style="width:200px">
-                                </div>
-                            </div>
-                            
-                            <input type="hidden" name="__token__" value="{$Request.token}" />
-                            <div class="layui-form-item">
-                                <div class="layui-input-block">
-                                    <button class="layui-btn layui-btn-radius"   onclick='login()'>立即提交</button>
-                                    <button onclick="back()" class="layui-btn layui-btn-primary layui-btn-radius">返回</button>
-                                </div>
-                            </div>
-                        </form>  
+            <div class="absoluteCenter" style="padding-top:100px">
+                <form class="layui-form" FORM method="post" id="form1" onsubmit="return false" action="##">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">昵称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="nickname"    placeholder="请输入昵称" autocomplete="off" class="layui-input" style="width:200px" >
+                        </div>
                     </div>
-                </div>         
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="username"    placeholder="请输入用户名" autocomplete="off" class="layui-input" style="width:200px" >
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密码框</label>
+                        <div class="layui-input-inline">
+                            <input type="password" name="password"   placeholder="请输入密码" autocomplete="off" class="layui-input" style="width:200px">
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" name="__token__" value="{$Request.token}" />
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button class="layui-btn layui-btn-radius"   onclick='login()'>立即提交</button>
+                            <button onclick="back()" class="layui-btn layui-btn-primary layui-btn-radius">返回</button>
+                        </div>
+                    </div>
+                </form>  
             </div>
-        
-        
-        </div>
+        </div>         
     </div>
+
 </body>
 </html>

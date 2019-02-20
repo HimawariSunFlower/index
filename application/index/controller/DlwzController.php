@@ -1,13 +1,4 @@
 <?php
-
-/**
- * @Author 张超.
- * @Copyright http://www.zhangchao.name
- * @Email 416716328@qq.com
- * @DateTime 2018/5/20 14:36
- * @Desc
- */
-
 namespace app\index\controller;
 use think\Db;
 use app\index\model\Dlwz;
@@ -36,7 +27,8 @@ class DlwzController extends \think\Controller
             Session::set("id",$sessionId);
             if($request->param()){
                 $user=$request->param();
-                if(!captcha_check($user["captcha"])){
+                //if(!captcha_check($user["captcha"])){     验证码好烦啊
+                    if(0){
                     return json(['status'=>0, 'info'=>'验证码错误']);
                 }else{
                     if($user["username"]&&$user["password"]){
@@ -72,52 +64,42 @@ class DlwzController extends \think\Controller
 
         return view();
     }
-    public function home()
-    {
+    public function msg(){
         if(session::get("id")){
             $info=session::get("user");
             $msg=[];
-            //dump($re);
-            // dump($info);
+            $view = new View();
+            $top=[];
             $judge =Db::table('think_user')->where('id',$info)->find();
-            $persona=Db::table('think_up')->where('uid',$judge["id"])->find();
-            //echo $persona["pid"];
-            //dump($persona);
+            $persona=Db::table('think_up')->where('uid',$judge["uid"])->find();
             $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
-            // dump($limit);
-            // return;
+           // dump($limit);
             
-            $top=Db::table('think_limit')->count();
-            //    echo $top;
-            //    echo count($limit);
-            for($i=0;$i<$top;$i++){
-                $lv =Db::table('think_limit')->where('id',500)->find();
-                $msg["lv$i"]=$lv["url"];   
-                for($x=0;$x<count($limit);$x++){
-                    if( $limit[$x]["lid"]==$i){
-                        $aaa = $limit[$x]["lid"];
-                        $lv =Db::table('think_limit')->where('id',$aaa)->find();
-                        $msg["lv$i"]=$lv["url"];   
-                        }
-
-                }
+            for($i=0;$i<count($limit);$i++){
+                //$top->append(array());
+                array_push($top,Db::table('think_limit')->where('id',"=",$limit[$i]["lid"])->find());
                 
             }
-            $msg["username"]=$judge["username"];
-            $msg["password"]= $judge["password"];
-            $msg["id"]=$judge["id"];
-            $view = new View();
-            $view->assign('msg',$msg);
-            
-            $inf=Db::table('think_user')
-            ->where('id', '>', 0)
-            ->paginate(10);
-            $view->assign('name',$inf);
-            return $view->fetch();
+            //dump($top);
+            $msg=$top; 
+            return $msg;
         }else{
-                echo "重新登陆";
-                return;
+            echo "重新登陆";
+            return;
         }
+    }
+    public function home()
+    {
+        $view =new view();
+        $msg=$this->msg();
+        $view->assign('msg',$msg);
+        $inf=Db::table('think_user')
+        ->where('id', '>', 0)
+        ->paginate(10);
+        $page=$inf->render();
+        $view->assign('name',$inf);
+        $view->assign('page',$page);
+        return $view->fetch();
     }
     public function logout(){
         session("id",null);
@@ -291,6 +273,89 @@ class DlwzController extends \think\Controller
             }
         }
     }
+
+    public function permit(Request $re){
+        if(session::get("id")){
+            $info=session::get("user");
+            $msg=[];
+            $view = new View();
+            $top=[];
+            $judge =Db::table('think_user')->where('id',$info)->find();
+            $persona=Db::table('think_up')->where('uid',$judge["uid"])->find();
+            $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
+            if(count($limit)==1){
+                $top=Db::table('think_limit')->where('lid',"=",$limit[0]["lid"])->select();
+            }elseif(count($limit)==2)
+            {
+                $top=Db::table('think_limit')
+                ->whereOR('lid',"=",$limit[0]["lid"])
+                ->whereOr('lid',"=",$limit[1]["lid"])->select();
+
+            }elseif(count($limit)==3){
+                $top=Db::table('think_limit')                                 
+                ->whereOR('lid',"=",$limit[0]["lid"])
+                ->whereOr('lid',"=",$limit[1]["lid"])
+                ->whereOr('lid',"=",$limit[2]["lid"])->select();
+              
+            }
+            $msg=$top; 
+            // dump($msg);
+            // return;
+            $view->assign('msg',$msg);
+       
+            $infomation=Db::table('think_limit')->where('id',">",0)->select();
+            //dump($infomation);                               
+            //return json(["status"=>1,'info'=>$infomation]);
+            return json(
+                [
+                    "code"=>0,
+                    "status"=>0,
+                    "message"=> "", 
+                    "count"=> 100, 
+                    "data"=> $infomation,
+                ]
+            );         
+        }
+    }
+
+    public function getHeader(Request $re){
+        $info=1;
+        $msg=[];
+        $view = new View();
+        $top=[];
+        $judge =Db::table('think_user')->where('id',$info)->find();
+        $persona=Db::table('think_up')->where('uid',$judge["uid"])->find();
+        $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
+        if(count($limit)==1){
+            $top=Db::table('think_limit')->where('lid',"=",$limit[0]["lid"])->select();
+        }elseif(count($limit)==2)
+        {
+            $top=Db::table('think_limit')
+            ->whereOR('lid',"=",$limit[0]["lid"])
+            ->whereOr('lid',"=",$limit[1]["lid"])->select();
+
+        }elseif(count($limit)==3){
+            $top=Db::table('think_limit')                                 
+            ->whereOR('lid',"=",$limit[0]["lid"])
+            ->whereOr('lid',"=",$limit[1]["lid"])
+            ->whereOr('lid',"=",$limit[2]["lid"])->select();
+          
+        }
+        $msg=$top; 
+        // dump($msg);
+        // return;
+        $view->assign('msg',$msg);
+        if($re->isAjax()){
+            
+            return view("getheader");
+            //return json(["code"=>0,"info"=>$info]);
+
+        }else{
+            return view("getheader");
+        }
+        
+    }
+    
 
     
 

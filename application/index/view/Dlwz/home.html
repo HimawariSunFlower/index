@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -7,230 +8,223 @@
   <link rel="stylesheet" href="/public/static/layui/css/layui.css">
   <title>也许是个主页</title>
   <style type="text/css">
-  ul.pagination {
-    display: inline-block;
-    padding: 0;
-    margin: 0;
-}
-
-ul.pagination li {display: inline;}
-
-ul.pagination li a {
-    color: #009688;
-    float: left;
-    padding: 8px 16px;
-    text-decoration: none;
-}
-ul.pagination li span {
-    color: black;
-    float: left;
-    padding: 8px 16px;
-    text-decoration: none;
+    ul.pagination {
+      display: inline-block;
+      padding: 0;
+      margin: 0;
     }
- #infoP{
-   padding: 20px;
 
- }
+    ul.pagination li {
+      display: inline;
+    }
 
+    ul.pagination li a {
+      color: #009688;
+      float: left;
+      padding: 8px 16px;
+      text-decoration: none;
+    }
+
+    ul.pagination li span {
+      color: black;
+      float: left;
+      padding: 8px 16px;
+      text-decoration: none;
+    }
+
+    #infoDiv {
+      padding: 20px;
+
+    }
   </style>
-  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-  <script src="/public/static/layui/lay/modules/layer.js"></script>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.js"></script>
+  <script src="/public/static/layui/layui.js"></script>
+
   <script>
-    $(document).ready(function(){
-
-      $("[href$='.jpg']").hide();
- 
- 
+    layui.use(['element', 'layer',], function () {
+      var element = layui.element,
+       layer = layui.layer;
     });
- 
   </script>
-
   <script type="text/javascript">
-   
-  login = function (option){
-    console.log(option);
-    //console.log($("input:hidden"));
-    $.ajax({
+    login = function (option) {
+      console.log(option);
+      //console.log($("input:hidden"));
+      $.ajax({
         //几个参数需要注意一下
         type: "POST",//方法类型
         dataType: "json",//预期服务器返回的数据类型
-        url: "{:url('index/Dlwz/eraseinf')}?id="+option ,//url
+        url: "{:url('index/Dlwz/eraseinf')}?id=" + option,//url
         data: $('#form1').serialize(),
         success: function (result) {
           console.log(result);//打印服务端返回的数据(调试用)
-          alert(result["info"]);
-           location.reload();
-          //layer.msg(result["info"]);   无效???
-      
+          //alert(result["info"]);
+          location.reload();
+          layer.msg(result["info"]);
+
         },
-        error : function() {
-          alert("异常！");
+        error: function () {
+          layer.msg("异常");
         }
-    });	   
-  }
-  query = function(elment){
-    var x;
-    var y;
-    var x;
-    $.ajax({
-         
-         //几个参数需要注意一下
-         type: "POST",//方法类型
-         dataType: "json",//预期服务器返回的数据类型
-         url: "{:url('index/Dlwz/queryinf')}" ,//url
-         data: $('#form2').serialize(),
-         success: function (result) {
-           console.log(result["info"]);//打印服务端返回的数据(调试用)
-           x=$(".layui-body").detach();
-           z=result["info"];
-           y="id 是 "+z["id"]+", 昵称 为 "+z["nickname"]+", 用户名 为 "+z["username"]+", 密码为 "+z["password"]+"."
-           $("#infoP").append(y);
-           $("#div1").css({"display":"block"}); 
-           $("#backBtn").click(function(){
-            $("body").prepend(x);
-            
-            $("#div1").css({"display":"none"});
-            $("#infoP").empty();
-
+      });
+    }
+    query = function (elment) {
+      var x;
+      var y;
+      var x;
+      $.ajax({
+        //几个参数需要注意一下
+        type: "POST",//方法类型
+        dataType: "json",//预期服务器返回的数据类型
+        url: "{:url('index/Dlwz/queryinf')}",//url
+        data: $('#form2').serialize(),
+        success: function (result) {
+          //layer.msg('提示');
+          console.log(result["info"]);//打印服务端返回的数据(调试用)
+          x = $(".info-body").detach();
+          z = result["info"];
+          y = "id 是 " + z["id"] + ", 昵称 为 " + z["nickname"] + ", 用户名 为 " + z["username"] + ", 密码为 " + z["password"] + "."
+          $("#infoDiv").append(y);
+          $("#div1").css({ "display": "block" });
+          $("#backBtn").click(function () {
+            $(".layui-body").prepend(x);
+            $("#div1").css({ "display": "none" });
+            $("#infoDiv").empty();
           });
-           
-
-
-          },
-         error : function() {
-           alert("异常！");
-         }
-     });	   
-    
-  }
+        },
+        error: function () {
+          layer.msg("异常");
+        }
+      });
+    }
   </script>
 </head>
-  <body class="layui-layout-body">
-    <div class="layui-layout layui-layout-admin">
-      <div class="layui-header">
-        <div class="layui-logo">layui 后台布局</div>
-        <!-- 头部区域（可配合layui已有的水平导航） -->
 
-        <ul class="layui-nav layui-layout-right">
-          <li class="layui-nav-item">
-            <a href="javascript:;">
-              <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-              admin
-            </a>
-            <dl class="layui-nav-child">
-              <dd><a href="">基本资料</a></dd>
-              <dd><a href="">安全设置</a></dd>
-            </dl>
+<body class="layui-layout-body">
+  <div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+      <div class="layui-logo">layui 后台布局</div>
+      <!-- 头部区域（可配合layui已有的水平导航） -->
+
+      <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+          <a href="javascript:;">
+            <img src="/public/images.jfif" class="layui-nav-img">
+            admin
+          </a>
+          <dl class="layui-nav-child">
+            <dd><a href="">基本资料</a></dd>
+            <dd><a href="">安全设置</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item"><a href="{:url('index/Dlwz/logout')}">注销</a></li>
+      </ul>
+    </div>
+
+    <div class="layui-side layui-bg-black">
+      <div class="layui-side-scroll">
+        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+        <ul class="layui-nav layui-nav-tree" lay-filter="test">
+          <li class="layui-nav-item layui-nav-itemed">
+            {foreach $msg as $key=>$vo}
+            {if $vo.parent==0}
+            <a class="" href="javascript:;">{$vo.name}</a>
+            <ul class="layui-nav-child">
+              {foreach $msg as $key=>$val}
+              {if $val.parent == $vo.id}
+              <li>
+                <a class="" href="javascript:;" >&nbsp;&nbsp;{$val.name}</a>
+                <ul class="layui-nav-child">
+                  {foreach $msg as $key=>$inf}
+                  {if $inf.parent == $val.id}
+                  <li class=""><a calss="infomation"
+                      href="/public/index.php/{$inf.url}">&nbsp;&nbsp;&emsp;{$inf.name}</a></li>
+                  {/if}
+                  {/foreach}
+                </ul>
+              </li>
+              {/if}
+              {/foreach}
+            </ul>
+            {/if}
+            {/foreach}
           </li>
-          <li class="layui-nav-item"><a href="{:url('index/Dlwz/logout')}">注销</a></li>
         </ul>
       </div>
-      
-      <div class="layui-side layui-bg-black">
-        <div class="layui-side-scroll">
-          <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
-          <ul class="layui-nav layui-nav-tree"  lay-filter="test">
-            <li class="layui-nav-item layui-nav-itemed">
-              <a class="" href="javascript:;">所有页面</a>
-              <dl class="layui-nav-child">
-                
-                <dd><a href="/application/index/{$msg.lv3}">列表一</a></dd>
-                <dd><a href="/application/index/{$msg.lv3}">列表二</a></dd>
-                <dd><a href="/application/index/{$msg.lv3}">列表三</a></dd>
-                
-              </dl>
-            </li>
-            <li class="layui-nav-item">
-              <a href="javascript:;">权限管理</a>
-              <dl class="layui-nav-child">
-                <dd><a href="/application/index/{$msg.lv1}">用户管理</a></dd>
-                <dd><a href="/application/index/{$msg.lv2}">权限管理</a></dd>
-              </dl>
-            </li>
-          </ul>
+    </div>
+
+
+    <div class="layui-body">
+      <div style="padding: 15px" class="info-body">
+        <table class="layui-table">
+          <colgroup>
+            <col width="100px">
+            <col span="3" width="200px">
+            <col span="3" width="70px">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>数据库id</th>
+              <th>昵称</th>
+              <th>头像</th>
+              <th>用户名</th>
+              <th>密码</th>
+              <th>删除</th>
+              <th>修改</th>
+              <th>上传头像</th>
+            </tr>
+          </thead>
+          <tbody>
+            {foreach $name as $key=>$vo }
+            <tr>
+              <td>{$vo.id}</td>
+              <td>{$vo.nickname}</td>
+              <td><img src="/public/uploads/{$vo.img}" style="height:50px;width:50px"></td>>
+              <td>{$vo.username}</td>
+              <td>{$vo.password}</td>
+              <td>
+                <FORM method="post" id="form1" action="##" align="center" onsubmit="return false">
+                  <INPUT type="button" class="layui-btn layui-btn-primary" value=" 删除 " onclick="login('{$vo.id}')">
+                </FORM>
+              </td>
+              <td>
+                <FORM method="post" class="form" action="{:url('index/Dlwz/revise')}?id={$vo.id}" align="center">
+                  <INPUT type="submit" class="layui-btn layui-btn-primary" value=" 修改 ">
+                </FORM>
+              </td>
+              <td>
+                <a href="{:url('index/Dlwz/imgup')}?id={$vo.id}" style="color:#009688">头像上传</a>
+              </td>
+            </tr>
+            {/foreach}
+          </tbody>
+        </table>
+        <div>
+          <FORM method="post" id="form2" action="##" onsubmit="return false" style="display:inline">
+            <INPUT type="text" class="text" name="username">
+            <INPUT style="margin-left:10px " type="button" class="layui-btn " value="查询" onclick="query()">
+          </FORM>
+          <FORM method="post" class="form" action="{:url('index/Dlwz/add')}" style="display:inline">
+            <INPUT type="submit" class="layui-btn" value=" 新增 " style="margin-left:10px ">
+          </FORM>
         </div>
+        {$name->render()}
       </div>
-      
-      <div class="layui-body">
-        <!-- 内容主体区域 -->
-        <div style="padding: 15px;padding-left: 50px;padding-right: 200px">
-		  	<table class="layui-table">
-				<colgroup>
-				<col width="100px">
-				<col span="3"width="200px">
-				<col span="3" width="70px">
-				</colgroup>
-				<thead>
-				<tr>
-					<th>数据库id</th>
-          <th>昵称</th>
-          <th>头像</th>
-					<th>用户名</th>
-					<th>密码</th>
-					<th>删除</th>
-          <th>修改</th>
-          <th >上传头像</th>
-				</tr> 
-				</thead>
-				<tbody>
-					{foreach $name as $key=>$vo } 
-					<tr>
-          <td>{$vo.id}</td>
-					<td>{$vo.nickname}</td>
-          <td><img src="/public/uploads/{$vo.img}" style="height:50px;width:50px"></td>>
-          <td>{$vo.username}</td>
-					<td>{$vo.password}</td>
-					<td>		
-						<FORM method="post" id="form1" action="##" align="center" onsubmit="return false">
-						<INPUT type="button" class="layui-btn layui-btn-primary" value=" 删除 " onclick="login('{$vo.id}')">
-						</FORM>
-					</td>
-					<td>
-						<FORM method="post" class="form" action="{:url('index/Dlwz/revise')}?id={$vo.id}" align="center">
-						<INPUT type="submit" class="layui-btn layui-btn-primary" value=" 修改 ">
-						</FORM>
-          </td>
-          <td >
-            <a href="{:url('index/Dlwz/imgup')}?id={$vo.id}" style="color:#009688">头像上传</a>
-          </td>
-					</tr>	
-					{/foreach}	
-				</tbody>
-			</table>
-		  	<div>
-				<FORM method="post" id="form2" action="##" onsubmit="return false" style="display:inline">
-				<INPUT type="text" class="text" name="username" ><INPUT style="margin-left:10px " type="button"  class="layui-btn " value="查询"  onclick="query()">
-				</FORM>
-				<FORM method="post" class="form" action="{:url('index/Dlwz/add')}" style="display:inline">
-				<INPUT type="submit" class="layui-btn"value=" 新增 " style="margin-left:10px ">
-				</FORM>
-			</div>   
-			{$name->render()}     
-		</div>
-
-
-    </div>
-    <div id="div1" style="display:none"  align="center">
-      <p id="infoP"></p>
-      <INPUT id="backBtn" type="button" class="layui-btn " value=" 返回 " ><br>
-      
-    </div>
-
-      
-      <div class="layui-footer">
-        <!-- 底部固定区域 -->
-         底部固定区域
+      <div id="div1" style="display:none" align="center">
+        <div id="infoDiv"></div>
+        <INPUT id="backBtn" type="button" class="layui-btn " value=" 返回 "><br>
       </div>
     </div>
 
+    <div class="layui-footer">
+      <!-- 底部固定区域 -->
+      底部固定区域
+    </div>
+  </div>
 
- 
-<script src="/public/static/layui/layui.js"></script>
-<script>
-  layui.use('element', function(){
-  var element = layui.element;
-  
-});
-</script> 
+
+
+
 </body>
+
 </html>

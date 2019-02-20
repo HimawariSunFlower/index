@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <link rel="stylesheet" href="/public/static/layui/css/layui.css">
+  <title>也许是个主页</title>
+  <style type="text/css">
+    ul.pagination {
+      display: inline-block;
+      padding: 0;
+      margin: 0;
+    }
+
+    ul.pagination li {
+      display: inline;
+    }
+
+    ul.pagination li a {
+      color: #009688;
+      float: left;
+      padding: 8px 16px;
+      text-decoration: none;
+    }
+
+    ul.pagination li span {
+      color: black;
+      float: left;
+      padding: 8px 16px;
+      text-decoration: none;
+    }
+
+    #infoDiv {
+      padding: 20px;
+
+    }
+  </style>
+  <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.js"></script>
+  <script src="/public/static/layui/layui.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      var element, layer, table;
+      layui.use(['element', 'layer', "table"], function () {
+        element = layui.element,
+          layer = layui.layer,
+          table = layui.table;
+
+        table.render({
+          elem: '#demo',
+          page: false,
+          url: "{:url('index/Left/permitTable')}",
+          toolbar: 'default',
+          cols: [[
+            { type: 'checkbox' }
+            , { field: 'id', title: 'ID', width: 100, unresize: true, sort: true }
+            , { field: 'name', title: '节点名', templet: '#usernameTpl' }
+            , { field: 'url', title: '网址' }
+            , { field: 'lid', title: '权限', minWidth: 120, sort: true }
+            , { field: 'parent', title: '父id', width: 85, templet: '#switchTpl', unresize: true }
+            , { fixed: 'right', width: 165, align: 'center', toolbar: '#barDemo' }
+          ]], //.表列设置
+          parseData: function (res) { //res 即为原始返回的数据
+            return {
+              "code": res.status, //解析接口状态
+              "msg": res.message, //解析提示文本
+              "count": res.total, //解析数据长度
+              "data": res.data //解析数据列表
+            };
+          }
+        });
+
+        function myAjax(urlInf,dataInf) {
+          $.ajax({
+            //几个参数需要注意一下
+            type: "POST",//方法类型
+            dataType: "json",//预期服务器返回的数据类型
+            url: urlInf,//url
+            data: { "id": dataInf },
+            success: function (result) {
+              console.log(result);
+              //alert(result["info"]);
+              layer.msg(result["info"]);
+
+            },
+            error: function () {
+              layer.msg("异常");
+            }
+          })
+        };
+        table.on('tool(test)', function (obj) { //注：tool 是工具条事件名，test 是 table 原始容器的属性 lay-filter="对应的值"
+          var data = obj.data //获得当前行数据
+            , layEvent = obj.event; //获得 lay-event 对应的值           表右侧js
+          if (layEvent === 'del') {
+            layer.confirm('真的删除行么', function (index) {
+              obj.del(); //删除对应行（tr）的DOM结构
+              layer.close(index);
+              //向服务端发送删除指令
+            });
+          } else if (layEvent === 'edit') {
+            layer.msg('编辑操作');
+          }
+        });
+        table.on('toolbar(test)', function (obj) {
+          var checkStatus = table.checkStatus(obj.config.id)
+            , data = checkStatus.data;   //获取选中的数据                   表头js
+          //console.log(data);
+          switch (obj.event) {
+            case 'add':
+            layer.open({
+              type: 2,
+              title: false,
+              closeBtn: 3,
+              area: ['700px', '450px'],
+              fixed: false, //不固定
+              maxmin: true,
+              shadeClose: true,
+              shade: false,
+              skin: 'layui-layer-molv',
+              content: "{:url('index/Left/add')}", 
+            });
+              break;
+            case 'update':
+              if (data.length === 0) {
+                layer.msg('请选择一行');
+              } else if (data.length > 1) {
+                layer.msg('只能同时编辑一个');
+              } else {
+                //layer.alert('编辑 [id]：' + checkStatus.data[0].id);
+                layer.open({
+                  type: 2,
+                  title: false,
+                  closeBtn: 3,
+                  area: ['700px', '450px'],
+                  fixed: false, //不固定
+                  maxmin: true,
+                  shadeClose: true,
+                  shade: false,
+                  skin: 'layui-layer-molv',
+                  content: "{:url('index/Left/update')}",
+                });
+              }
+              break;
+            case 'delete':
+              if (data.length === 0) {
+                layer.msg('请选择一行');
+              } else {
+                layer.msg('删除');
+              }
+              break;
+          };
+        });
+      })
+    })
+
+
+
+  </script>
+</head>
+
+<body class="layui-layout-body">
+  <div class="layui-layout layui-layout-admin">
+    <div class="layui-header">
+      <div class="layui-logo">layui 后台布局</div>
+      <!-- 头部区域（可配合layui已有的水平导航） -->
+
+      <ul class="layui-nav layui-layout-right">
+        <li class="layui-nav-item">
+          <a href="javascript:;">
+            <img src="/public/images.jfif" class="layui-nav-img">
+            admin
+          </a>
+          <dl class="layui-nav-child">
+            <dd><a href="">基本资料</a></dd>
+            <dd><a href="">安全设置</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item"><a href="{:url('index/Dlwz/logout')}">注销</a></li>
+      </ul>
+    </div>
+
+
+    <div class="layui-side layui-bg-black">
+      <div class="layui-side-scroll">
+        <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+        <ul class="layui-nav layui-nav-tree" lay-filter="test">
+          <li class="layui-nav-item layui-nav-itemed">
+            {foreach $msg as $key=>$vo}
+            {if $vo.parent==0}
+            <a class="" href="javascript:;">{$vo.name}</a>
+            <ul class="layui-nav-child">
+              {foreach $msg as $key=>$val}
+              {if $val.parent == $vo.id}
+              <li>
+                <a class="" href="javascript:;">&nbsp;&nbsp;{$val.name}</a>
+                <ul class="layui-nav-child">
+                  {foreach $msg as $key=>$inf}
+                  {if $inf.parent == $val.id}
+                  <li class=""><a calss="infomation"
+                      href="/public/index.php/{$inf.url}">&nbsp;&nbsp;&emsp;{$inf.name}</a></li>
+                  {/if}
+                  {/foreach}
+                </ul>
+              </li>
+              {/if}
+              {/foreach}
+            </ul>
+            {/if}
+            {/foreach}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+
+    <div class="layui-body">
+      <div style="padding: 15px" class="layui-table-body layui-table-main">
+        <table id="demo" lay-filter="test"></table>
+      </div>
+      <div class="layui-table-fixed layui-table-fixed-r" style="   left: auto;
+                right: -1px;
+                border-width: 0 0 0 1px;
+                box-shadow: -1px 0 8px rgba(0,0,0,.08);
+                height: 100;
+                width: 100;">
+        <script type="text/html" id="barDemo">
+          <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+          <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+      </div>
+    </div>
+
+    <div class="layui-footer">
+      <!-- 底部固定区域 -->
+      底部固定区域
+    </div>
+  </div>
+
+
+
+
+</body>
+
+</html>

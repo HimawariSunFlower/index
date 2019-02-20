@@ -29,7 +29,7 @@
                 }
                 },
                 error : function() {
-                    alert("异常！");
+                    layer.msg("异常"); 
                 }
         });   
     }
@@ -80,4 +80,9 @@
 
             
 </body>
+<script>
+  layui.use('layer', function(){
+    var layer = layui.layer;
+  });   
+</script>
 </html>
