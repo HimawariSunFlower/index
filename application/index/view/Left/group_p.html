@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="/public/static/layui/css/layui.css">
+<title>权限编辑</title>
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.js"></script>
+<script src="/public/static/layui/layui.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+      var element, layer, table;
+      layui.use(['element', 'layer', "table"], function () {
+        element = layui.element,
+          layer = layui.layer,
+          table = layui.table;
+
+        table.render({
+            id:"tableGroup",
+            elem: '#demo',
+            page: false,
+            url: "{:url('index/Left/permitTable')}",
+            //toolbar: 'default',
+            cols: [[
+                { type: 'checkbox' }
+                , { field: 'id', title: 'ID', width: 100, unresize: true, sort: true }
+                , { field: 'name', title: '节点名', templet: '#usernameTpl' }
+            ]], //.表列设置
+            parseData: function (res) { //res 即为原始返回的数据
+                return {
+                "code": res.status, //解析接口状态
+                "msg": res.message, //解析提示文本
+                "count": res.total, //解析数据长度
+                "data": res.data //解析数据列表
+                };
+            }
+        });
+
+        function myAjax(urlInf,dataInf,id) {
+          $.ajax({
+            //几个参数需要注意一下
+            type: "POST",//方法类型
+            dataType: "json",//预期服务器返回的数据类型
+            url: urlInf,//url
+            data: { "info": dataInf ,
+                    "id":id
+                },
+            success: function (result) {
+              console.log(result);
+              //alert(result["info"]);
+              layer.msg(result["info"]);
+
+            },
+            error: function () {
+              layer.msg("异常");
+            }
+          })
+        };
+        go = function(e){
+            var checkStatus = layui.table.checkStatus('tableGroup').data;
+            console.log(checkStatus)
+            myAjax("{:url('index/Left/persona_limit')}",checkStatus,e)
+        }
+
+      })
+    })
+
+  
+
+
+  </script>
+
+</head>
+<body>
+
+<div>
+<table id="demo" lay-data="{id: 'idTest'}"></table>
+</div>
+<div>
+    <button class="layui-btn layui-btn-normal" onclick='go("{$personaId}")'>保存</button>
+</div>
+
+
+</body>
+</html>
