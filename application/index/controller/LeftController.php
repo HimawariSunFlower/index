@@ -64,7 +64,7 @@ class LeftController extends \think\Controller
         $msg=$this->msg();
         $view->assign('msg',$msg);
        
-        return $view->fetch();;
+        return $view->fetch();
 
     }
     
@@ -97,8 +97,9 @@ class LeftController extends \think\Controller
         if($re->isAjax()){
             if ($re->param()){
                 $data=$re->param();
+                //dump($data);
                 if($data["name"]&&$data["url"]&&$data["lid"]){ //     parent又可能=0不能&&
-                    Db::name("think_limit")->insert($data);  //                lp表怎么设置   是在这里设置初始值还是说在角色页面分配
+                    Db::name("limit")->data($data)->insert();  //                lp表怎么设置   是在这里设置初始值还是说在角色页面分配
                   //  $inf=Db::table('think_limit')->where('url',$data["url"])->find();
                     return json(["status"=>1,"info"=>"创建成功"]);
                 }else{
@@ -112,8 +113,36 @@ class LeftController extends \think\Controller
         }
     }
 
-    public function update(){
-        return view();
+    public function update(Request $re){
+        $view = new view();
+        $data=$re->param();
+        $limit=Db::table('think_limit')->where('id',$data["id"])->select();
+        //dump($limit);
+        $view->assign('msg',$limit);
+
+        return $view->fetch();
+    }
+    public function updateinf(Request $re){
+        if($re->isAjax()){
+            if($re->param()){
+                $data=$re->param();
+                //dump($data["id"]);
+                Db::table('think_limit')->where('id',"=",$data["id"])->data($data)->update();   
+                return json(["status"=>1,"info"=>"更新成功"]);
+            }
+        }  
+
+    }
+    public function deleteinf(Request $re){
+        if($re->isAjax()){
+            if($re->param()){
+                $data=$re->param();
+                //dump($data["id"]);
+                Db::table('think_limit')->where('id',"=",$data["id"])->delete();   
+                return json(["status"=>1,"info"=>"删除成功"]);
+            }
+        }  
+
     }
     public function group(){
         return view();
