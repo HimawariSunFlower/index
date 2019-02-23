@@ -12,10 +12,10 @@ use think\view;
 
  
 
-class DlwzController extends \think\Controller
+class DlwzController extends \app\index\controller\BaseController
 {
     //登陆相关 （所有信息都按规则填写的情况下
-    public function index(Request $request)
+    public function index(Request $request)          //检测登陆信息
     {
         
         //return dump($request->param("nickname")); 
@@ -59,19 +59,19 @@ class DlwzController extends \think\Controller
         return;
 
     }
-    public function echos()
+    public function echos()                    //登陆界面
     {
 
         return view();
     }
-    public function msg(){
+    public function msg(){                       //侧边栏
         if(session::get("id")){
             $info=session::get("user");
             $msg=[];
             $view = new View();
             $top=[];
             $judge =Db::table('think_user')->where('id',$info)->find();
-            $persona=Db::table('think_up')->where('uid',$judge["uid"])->find();
+            $persona=Db::table('think_up')->where('uid',$judge["id"])->find();
             $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
            // dump($limit);
             
@@ -88,11 +88,34 @@ class DlwzController extends \think\Controller
             return;
         }
     }
-    public function home()
-    {
+    
+    public function getHeader(){               //导航栏头像 id获取并返回
+        $info=session::get("user");
+        $view = new View();
+        $userinf =Db::table('think_user')->where('id',$info)->find();
+        return $userinf;
+
+        
+    }
+    public function realhome(){
+
+        $view = new view();
+        $msg=$this->msg();
+        $getHeader=$this->getHeader();
+        $view->assign('header',$getHeader);
+        $view->assign('msg',$msg);   
+        return $view->fetch();
+
+    }
+    public function home()                  //首页(用户信息)
+    {    
         $view =new view();
         $msg=$this->msg();
+        $getHeader=$this->getHeader();
+        $userPersona=$this->userPersona();
         $view->assign('msg',$msg);
+        $view->assign('header',$getHeader);
+        $view->assign('persona5',$userPersona);
         $inf=Db::table('think_user')
         ->where('id', '>', 0)
         ->paginate(10);
@@ -100,17 +123,19 @@ class DlwzController extends \think\Controller
         $view->assign('name',$inf);
         $view->assign('page',$page);
         return $view->fetch();
+
+    
     }
-    public function logout(){
+    public function logout(){                 //注销
         session("id",null);
         
         return 	view("echos");
     }
-    public function add()
+    public function add()            //添加用户界面
     {
         return view();
     }
-    public function addinf(Request $request)
+    public function addinf(Request $request)    //添加用户方法
     {
         if($request->isAjax()){
             if ($request->param()){
@@ -139,16 +164,8 @@ class DlwzController extends \think\Controller
 
         
     }
-    // public function erase(Request $request)
-    // {
-    //     //dump($request);
-    //     $info=$request->param();
-    //     $this->assign('InfoId',$info["id"]);
-    //     //return dump($inf);
-    //     return $this->fetch();
 
-    // }
-    public function eraseinf(Request $request)
+    public function eraseinf(Request $request)   //删除方法
     {
         if($request->isAjax()){
             if ($request->param()){
@@ -174,23 +191,26 @@ class DlwzController extends \think\Controller
         
 
     }
-    public function revise(Request $request)
+    public function revise(Request $request)       //修改界面
     {
+        $view =new view();
+        $msg=$this->msg();
+        $view->assign('msg',$msg);
         $info=$request->param();
 
         $db1=Db::table('think_user')->where('id',$info["id"])->find();
         //dump($db1);
-        $this->assign([
+        $view->assign([
             'InfoId'=>$db1["id"],
             'InfoNn'=>$db1["nickname"],
             'InfoUn'=>$db1["username"],
             'InfoPw'=>$db1["password"],
 
         ]);
-        return $this->fetch();
+        return $view->fetch();
 
     }
-    public function reviseinf(Request $request)
+    public function reviseinf(Request $request)           //修改用户信息界面
     {
        
         //return $qqq;
@@ -222,7 +242,7 @@ class DlwzController extends \think\Controller
         
     }
     
-    public function queryinf(Request $re){
+    public function queryinf(Request $re){                  //更具id查询用户
         $info=$re->param();
         if($info["username"]){
             $inf=Db::table('think_user')->where('username',$info["username"])->find();
@@ -233,15 +253,13 @@ class DlwzController extends \think\Controller
         return json(['status'=>0, 'info'=>'传参错误']);
     }
 
-    public function imgup(Request $request){
+    public function imgup(Request $request){          //上传头像界面 根据id
         $info=$request->param();
 
-        $db1=Db::table('think_user')->where('id',$info["id"])->find();
+        //$db1=Db::table('think_user')->where('id',$info["id"])->find();
         //dump($db1);
         $this->assign([
-            'InfoId'=>$db1["id"],
-
-
+            'InfoId'=>$info["id"],
         ]);
         return $this->fetch();
         return view();
@@ -250,7 +268,7 @@ class DlwzController extends \think\Controller
 
 
 
-    public function upload(){
+    public function upload(){                //上传图像逻辑
         // 获取表单上传文件 例如上传了001.jpg
         $file = request()->file('image');
         $inf = request()->param();
@@ -274,90 +292,50 @@ class DlwzController extends \think\Controller
         }
     }
 
-    public function permit(Request $re){
+    public function userPersona(){                 //得到角色表信息
         if(session::get("id")){
-            $info=session::get("user");
-            $msg=[];
             $view = new View();
-            $top=[];
-            $judge =Db::table('think_user')->where('id',$info)->find();
-            $persona=Db::table('think_up')->where('uid',$judge["uid"])->find();
-            $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
-            if(count($limit)==1){
-                $top=Db::table('think_limit')->where('lid',"=",$limit[0]["lid"])->select();
-            }elseif(count($limit)==2)
-            {
-                $top=Db::table('think_limit')
-                ->whereOR('lid',"=",$limit[0]["lid"])
-                ->whereOr('lid',"=",$limit[1]["lid"])->select();
-
-            }elseif(count($limit)==3){
-                $top=Db::table('think_limit')                                 
-                ->whereOR('lid',"=",$limit[0]["lid"])
-                ->whereOr('lid',"=",$limit[1]["lid"])
-                ->whereOr('lid',"=",$limit[2]["lid"])->select();
-              
-            }
-            $msg=$top; 
-            // dump($msg);
-            // return;
-            $view->assign('msg',$msg);
-       
-            $infomation=Db::table('think_limit')->where('id',">",0)->select();
-            //dump($infomation);                               
-            //return json(["status"=>1,'info'=>$infomation]);
-            return json(
-                [
-                    "code"=>0,
-                    "status"=>0,
-                    "message"=> "", 
-                    "count"=> 100, 
-                    "data"=> $infomation,
-                ]
-            );         
-        }
-    }
-
-    public function getHeader(Request $re){
-        $info=1;
-        $msg=[];
-        $view = new View();
-        $top=[];
-        $judge =Db::table('think_user')->where('id',$info)->find();
-        $persona=Db::table('think_up')->where('uid',$judge["uid"])->find();
-        $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
-        if(count($limit)==1){
-            $top=Db::table('think_limit')->where('lid',"=",$limit[0]["lid"])->select();
-        }elseif(count($limit)==2)
-        {
-            $top=Db::table('think_limit')
-            ->whereOR('lid',"=",$limit[0]["lid"])
-            ->whereOr('lid',"=",$limit[1]["lid"])->select();
-
-        }elseif(count($limit)==3){
-            $top=Db::table('think_limit')                                 
-            ->whereOR('lid',"=",$limit[0]["lid"])
-            ->whereOr('lid',"=",$limit[1]["lid"])
-            ->whereOr('lid',"=",$limit[2]["lid"])->select();
-          
-        }
-        $msg=$top; 
-        // dump($msg);
-        // return;
-        $view->assign('msg',$msg);
-        if($re->isAjax()){
-            
-            return view("getheader");
-            //return json(["code"=>0,"info"=>$info]);
-
+            $persona5 = Db::table('think_persona')->where('id',">",0)->select();
+            return $persona5;
         }else{
-            return view("getheader");
+            echo "重新登陆";
+            return;
         }
-        
     }
-    
 
     
+    public function permitAdd(Request $re){             //用户选择角色界面
+        $view = new view();
+        $data=$re->param();
+        $view->assign("userid",$data["id"]);
+
+        return $view->fetch();
+    }
+
+    
+    public function permitAddinf(Request $re){             //用户选择角色方法
+        if($re->isAjax()){
+            $userid=$re->param()["id"];
+            //dump($re->param()["id"]);
+            $persona5 = Db::table('think_persona')->where('id',">",0)->select();
+            return json(["status"=>1,'info'=>$persona5]);
+
+        }
+    }
+    public function permitAddfuc(Request $re){             //up表新建关系
+        if($re->isAjax()){
+            //dump($re->param());
+            $uid=$re->param()["uid"];
+            $pid=$re->param()["pid"];
+            $user=["uid"=>$uid,"pid"=>$pid];
+            Db::table('think_up')->where('uid',"=",$uid)->delete();
+            Db::table('think_user')->where('id',"=",$uid)->update(['lv'=>$pid]);;
+            Db::table('think_up')->insert($user);
+            return json(["status"=>1,'info'=>"角色选择完成"]);
+
+        }
+
+    }
 
 
 }                       

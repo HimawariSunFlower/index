@@ -2,14 +2,12 @@
 <html>
     <!-- 网页的标题、图标... -->
 <head>
-    <mate charset="utf-8">
-    <title>修改账户</title>
-    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js">
-    </script>
-    <script src="/public/static/layui/lay/modules/layer.js"></script>
+    <meta charset="utf-8">
     <link rel="stylesheet" href="/public/static/layui/css/layui.css">
- 
-    <script>
+    <title>角色选择</title>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.js"></script>
+    <script src="/public/static/layui/layui.js"></script>
+    <script  type="text/javascript">
         layui.use(['element','layer'], function(){
             var element = layui.element;
             var layer = layui.layer;
@@ -37,11 +35,95 @@
                 }
         });
     }
-    back =function(){
+    back = function(){
         window.location.href = "{:url('index/Dlwz/home')}";
+    }
+    up = function(){
+        layer.open({
+              type: 2,
+              title: false,
+              closeBtn: 3,
+              area: ['700px', '450px'],
+              fixed: false, //不固定
+              maxmin: true,
+              shadeClose: true,
+              shade: false,
+              skin: 'layui-layer-molv',
+              content: "{:url('index/Dlwz/imgup')}?id={$InfoId}", 
+            });
+        //window.location.href = "{:url('index/Dlwz/imgup')}?id={$InfoId}" 
+    }
+    permit = function(){
+        layer.open({
+              type: 2,
+              title: false,
+              closeBtn: 2,
+              offset: 'auto',
+              area: ['700px', '450px'],
+              fixed: false, //不固定
+              maxmin: true,
+              shadeClose: true,
+              shade: 0.3,
+              skin: 'layui-layer-lan',
+              content: "{:url('index/Dlwz/permitAdd')}?id={$InfoId}", 
+            });
+
     }
     </script>
 </head>
+<body class="layui-layout-body">
+    <div class="layui-layout layui-layout-admin">
+      <div class="layui-header">
+        <div class="layui-logo">layui 后台布局</div>
+        <!-- 头部区域（可配合layui已有的水平导航） -->
+  
+        <ul class="layui-nav layui-layout-right">
+          <li class="layui-nav-item">
+            <a href="javascript:;">
+              <img src="/public/images.jfif" class="layui-nav-img">
+              admin
+            </a>
+            <dl class="layui-nav-child">
+              <dd><a href="">基本资料</a></dd>
+              <dd><a href="">安全设置</a></dd>
+            </dl>
+          </li>
+          <li class="layui-nav-item"><a href="{:url('index/Dlwz/logout')}">注销</a></li>
+        </ul>
+      </div>
+  
+      <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+          <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+          <ul class="layui-nav layui-nav-tree" lay-filter="test">
+            <li class="layui-nav-item layui-nav-itemed">
+              {foreach $msg as $key=>$vo}
+              {if $vo.parent==0}
+              <a class="" href="javascript:;">{$vo.name}</a>
+              <ul class="layui-nav-child">
+                {foreach $msg as $key=>$val}
+                {if $val.parent == $vo.id}
+                <li>
+                  <a class="" href="javascript:;" >&nbsp;&nbsp;{$val.name}</a>
+                  <ul class="layui-nav-child">
+                    {foreach $msg as $key=>$inf}
+                    {if $inf.parent == $val.id}
+                    <li class=""><a calss="infomation"
+                        href="/public/index.php/{$inf.url}">&nbsp;&nbsp;&emsp;{$inf.name}</a></li>
+                    {/if}
+                    {/foreach}
+                  </ul>
+                </li>
+                {/if}
+                {/foreach}
+              </ul>
+              {/if}
+              {/foreach}
+            </li>
+          </ul>
+        </div>
+      </div>
+  
     <!-- 网页的具体内容 -->
     <div class="layui-body">
         <!-- 内容主体区域 -->
@@ -74,13 +156,18 @@
                         <input type="hidden" name="__token__" value="{$Request.token}" />
                         <div class="layui-form-item">
                             <div class="layui-input-block">
-                                <button class="layui-btn layui-btn-radius"   onclick='login("{$InfoId}")'>立即提交</button>
-                                <button onclick="back()" type="reset" class="layui-btn layui-btn-primary layui-btn-radius">返回</button>
+                                <button class="layui-btn layui-btn-radius"  style="margin:10px" 
+                                onclick='login("{$InfoId}")'>立即提交</button>
+                                <button class="layui-btn layui-btn-radius"  style="margin:10px" 
+                                onclick='permit("{$InfoId}")'>权限修改</button><br>
+                                <button class="layui-btn layui-btn-radius" style="margin:10px"  
+                                onclick='up()'>头像上传</button>
+                                <button onclick="back()" type="reset" style="margin:10px" class="layui-btn layui-btn-radius">返回</button>
                             </div>
                         </div>
                     </form>  
                 </div>
-            </div>         
+            </div>                      
         </div>
     </div>
     

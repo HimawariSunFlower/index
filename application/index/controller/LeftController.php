@@ -14,14 +14,14 @@ use think\view;
 
 class LeftController extends \think\Controller
 {
-    public function msg(){
+    public function msg(){                     //侧边栏+导航栏
         if(session::get("id")){
             $info=session::get("user");
             $msg=[];
             $view = new View();
             $top=[];
             $judge =Db::table('think_user')->where('id',$info)->find();
-            $persona=Db::table('think_up')->where('uid',$judge["uid"])->find();
+            $persona=Db::table('think_up')->where('uid',$judge["id"])->find();
             $limit=Db::table('think_lp')->where('pid',$persona["pid"])->select();
             //dump($limit);
             
@@ -38,17 +38,29 @@ class LeftController extends \think\Controller
             return;
         }
     }
+    public function getHeader(){               //导航栏头像 id获取并返回
+        $info=session::get("user");
+        $view = new View();
+        $userinf =Db::table('think_user')->where('id',$info)->find();
+        return $userinf;
 
-    public function permit(){
         
-        $view = new view();
-        $msg=$this->msg();
-        $view->assign('msg',$msg);
-        return $view->fetch();
+    }
+
+    public function permit(){                     //权限界面
+        $landingcheck=$this->landingcheck();
+        if($landingcheck["permit"]==1){
+            $view = new view();
+            $msg=$this->msg();
+            $getHeader=$this->getHeader();
+            $view->assign('header',$getHeader);
+            $view->assign('msg',$msg);
+            return $view->fetch();
+        }
 
     }
     
-    public function permitTable(Request $re){
+    public function permitTable(Request $re){          //权限的表格
         if($re->isAjax()){
             $infomation=Db::table('think_limit')->where('id',">",0)->select();                            
             return json(
@@ -66,10 +78,10 @@ class LeftController extends \think\Controller
         }
 
     }
-    public function add(){
+    public function add(){                   //增加界面
         return view();   
     }
-    public function addinf(Request $re){
+    public function addinf(Request $re){               //增加方法
         if($re->isAjax()){
             if ($re->param()){
                 $data=$re->param();
@@ -88,7 +100,7 @@ class LeftController extends \think\Controller
             return view("add");
         }
     }
-    public function update(Request $re){
+    public function update(Request $re){                   //编辑 更新界面
         $view = new view();
         $data=$re->param();
         $limit=Db::table('think_limit')->where('id',$data["id"])->select();
@@ -97,7 +109,7 @@ class LeftController extends \think\Controller
 
         return $view->fetch();
     }
-    public function updateinf(Request $re){
+    public function updateinf(Request $re){           //编辑方法  缺少判断
         if($re->isAjax()){
             if($re->param()){
                 $data=$re->param();
@@ -108,7 +120,7 @@ class LeftController extends \think\Controller
         }  
 
     }
-    public function deleteinf(Request $re){
+    public function deleteinf(Request $re){                         //删除方法
         if($re->isAjax()){
             if($re->param()){
                 $data=$re->param();
@@ -118,14 +130,19 @@ class LeftController extends \think\Controller
             }
         }  
 
+    } 
+    public function group(){                //权限组界面
+        $landingcheck=$this->landingcheck();
+        if($landingcheck["group"]==1){
+            $view = new view();
+            $msg=$this->msg();
+            $getHeader=$this->getHeader();
+            $view->assign('header',$getHeader);
+            $view->assign('msg',$msg);   
+            return $view->fetch();
+        }
     }
-    public function group(){
-        $view = new view();
-        $msg=$this->msg();
-        $view->assign('msg',$msg);   
-        return $view->fetch();
-    }
-    public function groupinf(Request $re){
+    public function groupinf(Request $re){           //权限组表格
         if($re->isAjax()){
             $infomation=Db::table('think_persona')->where('id',">",0)->select();
             //dump($infomation);                               
@@ -143,10 +160,10 @@ class LeftController extends \think\Controller
             return;
         }
     }
-    public function personaAdd(){
+    public function personaAdd(){                   //添加角色界面
         return view();  
     }
-    public function personaAddinf(Request $re){
+    public function personaAddinf(Request $re){            //添加角色方法
         if($re->isAjax()){
             if ($re->param()){
                 $data=$re->param();
@@ -163,8 +180,8 @@ class LeftController extends \think\Controller
             return view("add");
         }
 
-    }
-    public function personaUpdate(Request $re){
+    }       
+    public function personaUpdate(Request $re){                //角色更新界面
         $view = new view();
         $data=$re->param();
         $limit=Db::table('think_persona')->where('id',$data["id"])->select();
@@ -174,7 +191,7 @@ class LeftController extends \think\Controller
         return $view->fetch();
 
     }
-    public function personaUpdateinf(Request $re){
+    public function personaUpdateinf(Request $re){                    //角色更新方法
         if($re->isAjax()){
             if($re->param()){
                 $data=$re->param();
@@ -184,7 +201,7 @@ class LeftController extends \think\Controller
             }
         }  
     }
-    public function personaDeleteinf(Request $re){
+    public function personaDeleteinf(Request $re){                //角色删除方法
         if($re->isAjax()){
             if($re->param()){
                 $data=$re->param();
@@ -195,17 +212,14 @@ class LeftController extends \think\Controller
         }  
 
     }
-    public function groupP(Request $re){
+    public function groupP(Request $re){                  //角色与权限连接
         $view = new view();
         $data=$re->param();
-        $limit=Db::table('think_persona')->where('id',">",0)->select();
-       //dump($limit);
-        $view->assign('msg',$limit);
         $view->assign("personaId",$data["id"]);
 
         return $view->fetch();
     }
-    public function personaTable(Request $re){
+    public function personaTable(Request $re){        //角色与权限挂钩的表格
         if($re->isAjax()){
             $infomation=Db::table('think_limit')->where('id',">",0)->select();                            
             return json(
@@ -223,16 +237,20 @@ class LeftController extends \think\Controller
         }
 
     }
-    public function persona_limit(Request $re){
+    public function persona_limit(Request $re){        //保存角色与权限的关联关系
         if($re->isAjax()){
            $inf=$re->param();
           // dump($inf["info"]);
            //echo $inf["id"];
-           Db::table('think_lp')->where('pid',"=",$inf["id"])->delete();   
-           for($i=0;$i<count($inf["info"]);$i++){
-               $lid=$inf["info"][$i]["id"];
-               Db::name("lp")->data(["pid"=>$inf["id"],"lid"=>$lid])->insert();
+           if($inf["info"]!="noop"){
+                Db::table('think_lp')->where('pid',"=",$inf["id"])->delete();   
+                for($i=0;$i<count($inf["info"]);$i++){
+                    $lid=$inf["info"][$i]["id"];
+                    Db::name("lp")->data(["pid"=>$inf["id"],"lid"=>$lid])->insert();
+                }
                //echo $lid;
+           }else{
+                Db::table('think_lp')->where('pid',"=",$inf["id"])->delete();  
            }
            return json(["status"=>1,"info"=>"权限赋予成功"]);
            
@@ -242,5 +260,43 @@ class LeftController extends \think\Controller
             return;
         }
     }
+
+    public function personaCheckbox(Request $re){         //角色与权限的默认勾选栏
+        if($re->isAjax()){
+            $inf=$re->param();
+            $id =$inf["id"];
+            //dump($inf["id"]);
+            $checked=Db::table('think_lp')->field("lid")->where('pid',"=",$id)->select();
+            //dump($checked);
+            return json(["status"=>0,"info"=>"默认选中成功","data"=>$checked]);
+            
+         }else{
+             echo "no";
+             return;
+         }
+
+    }
+    public function landingcheck(){              //权限访问限制
+        $data=[];
+        $permit=0;
+        $group=0;
+        $userId=session::get("user");
+        $lv=Db::table('think_up')->where('uid',$userId)->find();
+        $lv1=Db::table('think_lp')->where('pid',$lv["pid"])->select();
+        for($i=0;$i<count($lv1);$i++){  
+            array_push($data,Db::table('think_limit')->field("id")->where('id',"=",$lv1[$i]["lid"])->find());
+        }
+        for($i=0;$i<count($data);$i++){
+            $judge=$data[$i]["id"];
+            if($judge==7){
+                $permit = 1;
+            }       
+            if($judge==8){
+                $group = 1;
+            }   
+        }   
+       return ["permit"=>$permit,"group"=>$group];
+    }
+
 }
 

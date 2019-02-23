@@ -18,8 +18,7 @@
             id:"tableGroup",
             elem: '#demo',
             page: false,
-            url: "{:url('index/Left/permitTable')}",
-            //toolbar: 'default',
+            url: "{:url('index/Left/permitTable')}",           
             cols: [[
                 { type: 'checkbox' }
                 , { field: 'id', title: 'ID', width: 100, unresize: true, sort: true }
@@ -32,10 +31,39 @@
                 "count": res.total, //解析数据长度
                 "data": res.data //解析数据列表
                 };
+            } ,
+            done: function(res, curr, count){
+              var AllId;
+              var idChecked ;
+              $.ajax({
+                  //几个参数需要注意一下
+                  type: "POST",//方法类型
+                  dataType: "json",//预期服务器返回的数据类型
+                  url: "{:url('index/Left/personaCheckbox')}",//url
+                  data: {"id":{$personaId} },
+                  success: function (result) {
+                    if(result["data"]){
+                      for(i=0;i<result["data"].length;i++){
+                        idChecked = result["data"][i]["lid"]
+                        $("tbody tr").each(function(){
+                          AllId= $("td",this).eq(1).text();
+                          if(idChecked==AllId){
+                            $("td i",this).eq(0).click();
+                          }
+                        })                         
+                      }
+                    }
+                  },
+                  error: function () {
+                    layer.msg("异常");
+                  }
+                })   
+
+              
             }
         });
 
-        function myAjax(urlInf,dataInf,id) {
+        function myAjax(urlInf,id,dataInf) {
           $.ajax({
             //几个参数需要注意一下
             type: "POST",//方法类型
@@ -47,18 +75,32 @@
             success: function (result) {
               console.log(result);
               //alert(result["info"]);
-              layer.msg(result["info"]);
-
+              if(result["status"]==1){
+                parent.layer.msg(result["info"]);
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);
+                parent.setTimeout("parent.location.reload()",1500);
+              }
             },
             error: function () {
               layer.msg("异常");
             }
           })
         };
+
         go = function(e){
             var checkStatus = layui.table.checkStatus('tableGroup').data;
-            console.log(checkStatus)
-            myAjax("{:url('index/Left/persona_limit')}",checkStatus,e)
+           
+            if (checkStatus.length===0){
+              checkStatus ="noop"
+              
+            }//console.log(checkStatus)
+            myAjax("{:url('index/Left/persona_limit')}",e,checkStatus) // 保存
+        }
+
+        back = function(){
+          var index = parent.layer.getFrameIndex(window.name);
+          parent.layer.close(index);
         }
 
       })
@@ -77,6 +119,7 @@
 </div>
 <div>
     <button class="layui-btn layui-btn-normal" onclick='go("{$personaId}")'>保存</button>
+    <button class="layui-btn layui-btn-normal" onclick='back()'>返回</button>
 </div>
 
 

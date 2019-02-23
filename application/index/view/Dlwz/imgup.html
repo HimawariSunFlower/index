@@ -18,7 +18,7 @@
           // },
           success:function(data){
               //alert("成功");
-              window.location.href = "{:url('index/Dlwz/home')}";
+              parent.window.location.href = "{:url('index/Dlwz/home')}";
                           
           },
           error:function(xhr){
@@ -28,11 +28,34 @@
   }
   </script>
   <body>
-  <form action="{:url('index/dlwz/upload')}" enctype="multipart/form-data" method="post" id="form1">
-    <input type="file" name="image" /> <br> 
+  <form action="{:url('index/dlwz/upload')}" enctype="multipart/form-data" method="post" id="form1" class="layui-form">
+    <input type="file" name="image" />
+    
     <input type="button" value="上传" onclick='login("{$InfoId}")' />
   </form> 
+<!-- 
+  <button type="button" class="layui-btn" id="test1">
+    <i class="layui-icon">&#xe67c;</i>上传图片
+  </button>
+                                                                 用layui的上传按钮
 
+  <script>
+  layui.use('upload', function(){
+    var upload = layui.upload;
+     
+    //执行实例
+    var uploadInst = upload.render({
+      elem: '#test1' //绑定元素
+      ,url: '/upload/' //上传接口
+      ,done: function(res){
+        //上传完毕回调
+      }
+      ,error: function(){
+        //请求异常回调
+      }
+    });
+  });
+  </script> -->
   </body>
   <script>
       layui.use('layer', function(){
